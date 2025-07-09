@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The AI Quest: An Interactive Adventure</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-glow: #00c9ff;
+            --secondary-glow: #92fe9d;
+            --background-start: #0f0c29;
+            --background-mid: #302b63;
+            --background-end: #24243e;
+            --card-bg: rgba(20, 16, 41, 0.6);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, var(--background-start), var(--background-mid), var(--background-end));
+            color: #e0e0ff;
+            overflow-x: hidden;
+        }
+
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .text-glow {
+            text-shadow: 0 0 8px var(--primary-glow), 0 0 12px var(--primary-glow), 0 0 20px var(--primary-glow);
+        }
+        
+        .text-glow-secondary {
+             text-shadow: 0 0 8px var(--secondary-glow), 0 0 12px var(--secondary-glow);
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover:not(.no-hover) {
+            transform: translateY(-10px);
+            box-shadow: 0 0 20px rgba(0, 201, 255, 0.3), 0 0 30px rgba(146, 254, 157, 0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary-glow), var(--secondary-glow));
+            color: var(--background-start);
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 0 15px rgba(0, 201, 255, 0.5);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(0, 201, 255, 0.8);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .option-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover {
+            background: rgba(0, 201, 255, 0.2);
+            border-color: var(--primary-glow);
+        }
+        
+        .option-btn.correct {
+            background: rgba(146, 254, 157, 0.3);
+            border-color: var(--secondary-glow);
+            transform: scale(1.02);
+        }
+
+        .option-btn.incorrect {
+            background: rgba(255, 70, 70, 0.3);
+            border-color: #ff4646;
+        }
+        
+        .option-btn.disabled {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        /* Scroll reveal animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        #quiz-progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-glow);
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-900">
+
+    <div class="container mx-auto p-4 md:p-8">
+        
+        <!-- Header Section -->
+        <header class="text-center py-8 md:py-16 reveal">
+            <h1 class="text-4xl md:text-6xl font-orbitron font-bold text-white text-glow mb-4">The AI Quest</h1>
+            <p class="text-lg md:text-xl max-w-3xl mx-auto">An interactive journey to understand the world of Artificial Intelligence, powered by Gemini.</p>
+        </header>
+
+        <!-- What is AI Section -->
+        <section id="what-is-ai" class="my-16 reveal">
+             <div class="card rounded-2xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-8">
+                <div class="w-full md:w-2/3">
+                    <h2 class="text-3xl md:text-4xl font-orbitron font-bold text-white text-glow mb-4">The Spark of Intelligence</h2>
+                    <p class="mb-4">Imagine a digital mind, capable of learning and solving puzzles just like a human. That's the essence of <span class="font-bold text-glow-secondary">Artificial Intelligence (AI)</span>. It's the science of breathing intelligence into machines, enabling them to mimic human actions, learn from experience, and make decisions with minimal human guidance.</p>
+                    <p>These systems build their own knowledge and use past experiences to make smarter choices in the future.</p>
+                </div>
+                <div class="w-full md:w-1/3 flex justify-center items-center">
+                    <i class="fas fa-robot text-9xl text-glow" style="filter: drop-shadow(0 0 15px var(--primary-glow));"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gemini API Feature: Ask the Oracle -->
+        <section id="ai-oracle" class="my-16 reveal">
+            <div class="card no-hover rounded-2xl p-8 md:p-12">
+                <h2 class="text-3xl md:text-4xl font-orbitron font-bold text-white text-center text-glow mb-4">✨ Ask the AI Oracle</h2>
+                <p class="text-center max-w-2xl mx-auto mb-8">Have a question about AI? Ask the Oracle and get an explanation from the Gemini model.</p>
+                <div class="flex flex-col md:flex-row gap-4 max-w-2xl mx-auto">
+                    <input id="oracle-input" type="text" placeholder="e.g., How does machine learning work?" class="w-full bg-gray-900/50 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-glow">
+                    <button id="oracle-ask-btn" class="btn-primary font-bold py-3 px-6 rounded-lg flex items-center justify-center gap-2">
+                        <span id="oracle-btn-text">Ask</span>
+                        <div id="oracle-spinner" class="spinner hidden"></div>
+                    </button>
+                </div>
+                <div id="oracle-answer-box" class="mt-8 p-6 bg-gray-900/50 rounded-lg border border-gray-700 hidden">
+                    <h3 class="font-orbitron text-xl text-glow-secondary mb-2">The Oracle Speaks:</h3>
+                    <p id="oracle-answer-text" class="text-lg whitespace-pre-wrap"></p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Applications Section -->
+        <section id="applications" class="my-16 reveal">
+            <h2 class="text-3xl md:text-4xl font-orbitron font-bold text-white text-center text-glow mb-12">AI in Action: Everyday Magic</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- App Cards -->
+                <div class="card rounded-2xl p-6 text-center"><i class="fas fa-map-marked-alt text-4xl mb-4 text-glow"></i><h3 class="text-2xl font-orbitron text-white mb-2">Personal Navigator</h3><p class="text-sm">AI algorithms analyze real-time traffic to find the quickest route.</p></div>
+                <div class="card rounded-2xl p-6 text-center"><i class="fas fa-camera-retro text-4xl mb-4 text-glow"></i><h3 class="text-2xl font-orbitron text-white mb-2">Social Sorcerer</h3><p class="text-sm">AI-powered facial recognition instantly recognizes friends in photos.</p></div>
+                <div class="card rounded-2xl p-6 text-center"><i class="fas fa-microphone-alt text-4xl mb-4 text-glow"></i><h3 class="text-2xl font-orbitron text-white mb-2">Voice in the Cloud</h3><p class="text-sm">Digital assistants like Siri and Alexa use AI to understand your voice.</p></div>
+                <div class="card rounded-2xl p-6 text-center"><i class="fas fa-shopping-cart text-4xl mb-4 text-glow"></i><h3 class="text-2xl font-orbitron text-white mb-2">Ultimate Recommender</h3><p class="text-sm">Netflix and Amazon use AI to suggest content you'll love.</p></div>
+                <div class="card rounded-2xl p-6 text-center"><i class="fas fa-heartbeat text-4xl mb-4 text-glow"></i><h3 class="text-2xl font-orbitron text-white mb-2">Health Guardian</h3><p class="text-sm">AI helps doctors analyze medical images to detect diseases early.</p></div>
+                <div class="card rounded-2xl p-6 text-center"><i class="fas fa-car-side text-4xl mb-4 text-glow"></i><h3 class="text-2xl font-orbitron text-white mb-2">Driver of the Future</h3><p class="text-sm">Self-driving cars use a complex network of AI to navigate safely.</p></div>
+            </div>
+        </section>
+
+        <!-- Quiz Game Section -->
+        <section id="quiz-game" class="my-16 reveal">
+            <h2 class="text-3xl md:text-4xl font-orbitron font-bold text-white text-center text-glow mb-4">The AI Challenge</h2>
+            <p class="text-center max-w-2xl mx-auto mb-8">Test your knowledge with a static quest, or generate a new one with Gemini!</p>
+            
+            <div class="flex justify-center mb-8">
+                 <button id="generate-quest-btn" class="btn-primary font-bold py-3 px-8 rounded-full text-lg flex items-center justify-center gap-2">
+                    <span id="quest-btn-text">✨ Generate a New Quest!</span>
+                    <div id="quest-spinner" class="spinner hidden"></div>
+                </button>
+            </div>
+
+            <div id="quiz-container" class="card no-hover rounded-2xl p-8 md:p-12 max-w-4xl mx-auto">
+                 <div class="w-full bg-gray-700 rounded-full h-2.5 mb-6">
+                    <div id="quiz-progress-bar" class="bg-gradient-to-r from-blue-400 to-green-400 h-2.5 rounded-full" style="width: 0%"></div>
+                </div>
+
+                <div id="quiz-content">
+                    <!-- Quiz questions will be injected here -->
+                </div>
+                
+                <div id="quiz-results" class="hidden text-center">
+                    <h3 class="text-3xl font-orbitron text-white mb-4">Quest Complete!</h3>
+                    <p class="text-5xl font-orbitron font-bold text-glow-secondary my-4" id="final-score"></p>
+                    <p class="text-2xl font-orbitron text-white mb-2" id="final-title"></p>
+                    <p class="text-lg mb-6" id="final-feedback"></p>
+                    <button id="restart-btn" class="btn-primary font-bold py-3 px-8 rounded-full text-lg">Try Again</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Footer -->
+        <footer class="text-center py-8 text-gray-400 text-sm reveal">
+            <p>Created for educational purposes | The AI Quest</p>
+            <p>© 2025 AI Learning Module | All rights reserved</p>
+        </footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Default Quiz Data ---
+            let quizData = [
+                { question: "What does 'AI' stand for?", options: ["Automated Information", "Algorithmic Integration", "Artificial Intelligence", "Advanced Internet"], answer: "Artificial Intelligence" },
+                { question: "Which of these is a prime example of AI in action?", options: ["Using a simple calculator", "Your smartphone's map suggesting the fastest route home", "Sending a plain email", "Taking a digital photograph"], answer: "Your smartphone's map suggesting the fastest route home" },
+                { question: "What cognitive abilities does AI aim to replicate?", options: ["Physical strength and speed", "Breathing and digestion", "Learning, decision-making, and problem-solving", "Emotional responses and pure creativity"], answer: "Learning, decision-making, and problem-solving" },
+                { question: "How does an AI system become smarter?", options: ["By being manually reprogrammed", "Through hardware upgrades", "By learning from data and experiences", "By following a user manual"], answer: "By learning from data and experiences" },
+                { question: "What technology is used for automatic friend tagging in photos?", options: ["GPS tracking", "Barcode scanning", "Facial recognition", "Voice recognition"], answer: "Facial recognition" }
+            ];
+
+            // --- DOM Elements ---
+            const quizContent = document.getElementById('quiz-content');
+            const quizResults = document.getElementById('quiz-results');
+            const restartBtn = document.getElementById('restart-btn');
+            const progressBar = document.getElementById('quiz-progress-bar');
+            const oracleInput = document.getElementById('oracle-input');
+            const oracleAskBtn = document.getElementById('oracle-ask-btn');
+            const oracleBtnText = document.getElementById('oracle-btn-text');
+            const oracleSpinner = document.getElementById('oracle-spinner');
+            const oracleAnswerBox = document.getElementById('oracle-answer-box');
+            const oracleAnswerText = document.getElementById('oracle-answer-text');
+            const generateQuestBtn = document.getElementById('generate-quest-btn');
+            const questBtnText = document.getElementById('quest-btn-text');
+            const questSpinner = document.getElementById('quest-spinner');
+
+
+            // --- State Variables ---
+            let currentQuestionIndex = 0;
+            let score = 0;
+            const apiKey = ""; // Leave empty, will be handled by the environment
+
+            // --- Gemini API Functions ---
+
+            /**
+             * Gets an explanation for a user's query from the Gemini API.
+             */
+            async function getAiExplanation() {
+                const prompt = oracleInput.value;
+                if (!prompt) {
+                    oracleAnswerText.textContent = "Please ask a question first.";
+                    oracleAnswerBox.classList.remove('hidden');
+                    return;
+                }
+
+                // Show loading state
+                oracleBtnText.textContent = "Thinking...";
+                oracleSpinner.classList.remove('hidden');
+                oracleAskBtn.disabled = true;
+                oracleAnswerBox.classList.add('hidden');
+
+                try {
+                    const chatHistory = [{ role: "user", parts: [{ text: `Explain this AI concept in a simple and clear way for a beginner: "${prompt}"` }] }];
+                    const payload = { contents: chatHistory };
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API request failed with status ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    
+                    if (result.candidates && result.candidates.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        oracleAnswerText.textContent = text;
+                    } else {
+                        throw new Error("Invalid response from API.");
+                    }
+                } catch (error) {
+                    console.error("Gemini API Error:", error);
+                    oracleAnswerText.textContent = "Sorry, the Oracle is resting. Please try again later.";
+                } finally {
+                    // Hide loading state
+                    oracleAnswerBox.classList.remove('hidden');
+                    oracleBtnText.textContent = "Ask";
+                    oracleSpinner.classList.add('hidden');
+                    oracleAskBtn.disabled = false;
+                }
+            }
+
+            /**
+             * Generates a new set of quiz questions using the Gemini API with a defined JSON schema.
+             */
+            async function generateNewQuiz() {
+                // Show loading state
+                questBtnText.textContent = "Generating...";
+                questSpinner.classList.remove('hidden');
+                generateQuestBtn.disabled = true;
+
+                try {
+                    const prompt = "Generate 5 unique, beginner-level multiple-choice questions about the basics of Artificial Intelligence. Ensure the questions cover different aspects of AI.";
+                    const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+                    
+                    // Define the expected JSON structure for the response
+                    const quizSchema = {
+                        type: "OBJECT",
+                        properties: {
+                            "questions": {
+                                type: "ARRAY",
+                                items: {
+                                    type: "OBJECT",
+                                    properties: {
+                                        "question": { "type": "STRING" },
+                                        "options": {
+                                            "type": "ARRAY",
+                                            "items": { "type": "STRING" }
+                                        },
+                                        "answer": { "type": "STRING" }
+                                    },
+                                    required: ["question", "options", "answer"]
+                                }
+                            }
+                        },
+                        required: ["questions"]
+                    };
+
+                    const payload = {
+                        contents: chatHistory,
+                        generationConfig: {
+                            responseMimeType: "application/json",
+                            responseSchema: quizSchema
+                        }
+                    };
+
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API request failed with status ${response.status}`);
+                    }
+                    
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates[0].content.parts[0].text) {
+                        const jsonText = result.candidates[0].content.parts[0].text;
+                        const parsedJson = JSON.parse(jsonText);
+                        
+                        if (parsedJson.questions && parsedJson.questions.length > 0) {
+                            quizData = parsedJson.questions;
+                            startQuiz(); // Restart the quiz with new data
+                        } else {
+                           throw new Error("Generated JSON is not in the expected format.");
+                        }
+                    } else {
+                        throw new Error("Invalid response from API.");
+                    }
+
+                } catch (error) {
+                    console.error("Gemini API Error:", error);
+                    alert("Failed to generate a new quest. Please try again later.");
+                } finally {
+                    // Hide loading state
+                    questBtnText.textContent = "✨ Generate a New Quest!";
+                    questSpinner.classList.add('hidden');
+                    generateQuestBtn.disabled = false;
+                }
+            }
+
+
+            // --- Quiz Functions ---
+            function startQuiz() {
+                currentQuestionIndex = 0;
+                score = 0;
+                quizResults.classList.add('hidden');
+                quizContent.classList.remove('hidden');
+                showQuestion();
+            }
+
+            function showQuestion() {
+                if (currentQuestionIndex >= quizData.length) {
+                    showResults();
+                    return;
+                }
+                const questionData = quizData[currentQuestionIndex];
+                
+                const progress = ((currentQuestionIndex) / quizData.length) * 100;
+                progressBar.style.width = `${progress}%`;
+
+                quizContent.innerHTML = `
+                    <h3 class="text-xl md:text-2xl text-white mb-6 text-center">${questionData.question}</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        ${questionData.options.map(option => `
+                            <button class="option-btn p-4 rounded-lg text-left w-full">
+                                ${option}
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+
+                const optionButtons = quizContent.querySelectorAll('.option-btn');
+                optionButtons.forEach(button => {
+                    button.addEventListener('click', handleOptionClick);
+                });
+            }
+
+            function handleOptionClick(event) {
+                const selectedButton = event.target;
+                const selectedAnswer = selectedButton.textContent.trim();
+                const correctAnswer = quizData[currentQuestionIndex].answer;
+                
+                const optionButtons = quizContent.querySelectorAll('.option-btn');
+                optionButtons.forEach(btn => btn.classList.add('disabled'));
+
+                if (selectedAnswer === correctAnswer) {
+                    score++;
+                    selectedButton.classList.add('correct');
+                } else {
+                    selectedButton.classList.add('incorrect');
+                    optionButtons.forEach(btn => {
+                        if (btn.textContent.trim() === correctAnswer) {
+                            btn.classList.add('correct');
+                        }
+                    });
+                }
+                
+                setTimeout(() => {
+                    currentQuestionIndex++;
+                    showQuestion();
+                }, 1500);
+            }
+
+            function showResults() {
+                quizContent.classList.add('hidden');
+                quizResults.classList.remove('hidden');
+                progressBar.style.width = '100%';
+
+                const finalScoreEl = document.getElementById('final-score');
+                const finalTitleEl = document.getElementById('final-title');
+                const finalFeedbackEl = document.getElementById('final-feedback');
+
+                finalScoreEl.textContent = `${score} / ${quizData.length}`;
+
+                if (score === quizData.length) {
+                    finalTitleEl.textContent = "AI Grandmaster";
+                    finalFeedbackEl.textContent = "You are a true master of the digital age! Your knowledge is unparalleled.";
+                } else if (score >= quizData.length * 0.6) {
+                    finalTitleEl.textContent = "AI Adept";
+                    finalFeedbackEl.textContent = "You possess a strong understanding of the fundamentals. The world of AI is open to you.";
+                } else if (score >= quizData.length * 0.3) {
+                    finalTitleEl.textContent = "AI Apprentice";
+                    finalFeedbackEl.textContent = "A noble start! Continue your quest for knowledge to unlock the full power of AI.";
+                } else {
+                    finalTitleEl.textContent = "AI Novice";
+                    finalFeedbackEl.textContent = "Every great journey begins with a single step. You've taken your first one into the exciting world of AI!";
+                }
+            }
+
+            // --- Event Listeners ---
+            restartBtn.addEventListener('click', startQuiz);
+            oracleAskBtn.addEventListener('click', getAiExplanation);
+            oracleInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') getAiExplanation();
+            });
+            generateQuestBtn.addEventListener('click', generateNewQuiz);
+
+            // --- Initializer ---
+            startQuiz();
+            
+            // --- Scroll Reveal Animation ---
+            const revealElements = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            revealElements.forEach(el => observer.observe(el));
+        });
+    </script>
+</body>
+</html>
