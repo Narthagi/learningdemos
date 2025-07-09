@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Deque Simulation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(to right, #ff9966, #ff5e62);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 20px;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+        
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+        
+        .deque-container {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .deque-title {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #4fc3f7;
+        }
+        
+        .deque-visualization {
+            min-height: 250px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .deque-labels {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+        
+        .front-label, .rear-label {
+            background: rgba(255, 107, 107, 0.8);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        .deque-items {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            min-height: 150px;
+        }
+        
+        .deque-item {
+            background: linear-gradient(135deg, #43cea2, #185a9d);
+            color: white;
+            font-weight: bold;
+            font-size: 1.4rem;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            animation: popIn 0.3s ease-out;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .deque-item.front {
+            background: linear-gradient(135deg, #FF512F, #F09819);
+            transform: scale(1.1);
+            z-index: 2;
+        }
+        
+        .deque-item.rear {
+            background: linear-gradient(135deg, #4568dc, #b06ab3);
+            transform: scale(1.1);
+            z-index: 2;
+        }
+        
+        .deque-item.empty {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 1rem;
+        }
+        
+        @keyframes popIn {
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .controls {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .controls-title {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #4fc3f7;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+            color: #e0e0e0;
+        }
+        
+        input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            font-size: 1.1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #4fc3f7;
+        }
+        
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        button {
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .insert-front {
+            background: linear-gradient(135deg, #43cea2, #185a9d);
+            color: white;
+        }
+        
+        .delete-front {
+            background: linear-gradient(135deg, #FF512F, #F09819);
+            color: white;
+        }
+        
+        .insert-rear {
+            background: linear-gradient(135deg, #4568dc, #b06ab3);
+            color: white;
+        }
+        
+        .delete-rear {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: white;
+        }
+        
+        .status {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            min-height: 100px;
+        }
+        
+        .status-title {
+            margin-bottom: 15px;
+            color: #4fc3f7;
+            font-size: 1.2rem;
+        }
+        
+        .status-content {
+            line-height: 1.6;
+            color: #e0e0e0;
+        }
+        
+        .instructions {
+            margin-top: 30px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            border-radius: 15px;
+            max-width: 1000px;
+        }
+        
+        .instructions h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #4fc3f7;
+        }
+        
+        .instructions-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .instruction-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .instruction-card h3 {
+            margin-bottom: 10px;
+            color: #43cea2;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .instruction-card p {
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+        
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            padding: 20px;
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+        
+        .highlight {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+            }
+            
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-random"></i> Double-Ended Queue (Deque) Simulation</h1>
+            <p class="subtitle">A deque (double-ended queue) is an abstract data type that generalizes a queue, allowing elements to be added to or removed from either the front or rear. This interactive simulation helps visualize deque operations in real-time.</p>
+        </header>
+        
+        <div class="content">
+            <div class="deque-container">
+                <h2 class="deque-title">Deque Visualization</h2>
+                <div class="deque-visualization">
+                    <div class="deque-labels">
+                        <div class="front-label">FRONT</div>
+                        <div class="rear-label">REAR</div>
+                    </div>
+                    <div class="deque-items" id="deque-items">
+                        <div class="deque-item empty">Empty Deque</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <h2 class="controls-title">Deque Operations</h2>
+                <div class="input-group">
+                    <label for="item-input">Enter a value:</label>
+                    <input type="text" id="item-input" placeholder="Enter item..." maxlength="10">
+                </div>
+                
+                <div class="button-group">
+                    <button class="insert-front" id="insert-front">
+                        <i class="fas fa-arrow-circle-left"></i> Insert Front
+                    </button>
+                    <button class="delete-front" id="delete-front">
+                        <i class="fas fa-arrow-circle-right"></i> Delete Front
+                    </button>
+                    <button class="insert-rear" id="insert-rear">
+                        Insert Rear <i class="fas fa-arrow-circle-right"></i>
+                    </button>
+                    <button class="delete-rear" id="delete-rear">
+                        Delete Rear <i class="fas fa-arrow-circle-left"></i>
+                    </button>
+                </div>
+                
+                <div class="status">
+                    <h3 class="status-title">Operation Status</h3>
+                    <div class="status-content" id="status">
+                        Ready to perform deque operations. Enter a value and choose an operation.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h2><i class="fas fa-info-circle"></i> About Deques</h2>
+            <div class="instructions-content">
+                <div class="instruction-card">
+                    <h3><i class="fas fa-lightbulb"></i> What is a Deque?</h3>
+                    <p>A deque (double-ended queue) is an abstract data type that generalizes a queue, allowing elements to be added to or removed from either the front (head) or rear (tail).</p>
+                </div>
+                
+                <div class="instruction-card">
+                    <h3><i class="fas fa-cogs"></i> Key Operations</h3>
+                    <p>
+                        • <span class="highlight">insertFront</span>: Add an element at the front<br>
+                        • <span class="highlight">insertRear</span>: Add an element at the rear<br>
+                        • <span class="highlight">deleteFront</span>: Remove an element from front<br>
+                        • <span class="highlight">deleteRear</span>: Remove an element from rear
+                    </p>
+                </div>
+                
+                <div class="instruction-card">
+                    <h3><i class="fas fa-project-diagram"></i> Time Complexity</h3>
+                    <p>
+                        • Insertion at front/rear: O(1)<br>
+                        • Deletion from front/rear: O(1)<br>
+                        • Accessing front/rear element: O(1)
+                    </p>
+                </div>
+                
+                <div class="instruction-card">
+                    <h3><i class="fas fa-th-list"></i> Applications</h3>
+                    <p>
+                        • Undo/Redo functionality<br>
+                        • Browser history management<br>
+                        • Implementing both stacks and queues<br>
+                        • Palindrome checking algorithms
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Interactive Deque Simulation | Created for Educational Purposes</p>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dequeItems = document.getElementById('deque-items');
+            const itemInput = document.getElementById('item-input');
+            const statusDiv = document.getElementById('status');
+            const insertFrontBtn = document.getElementById('insert-front');
+            const insertRearBtn = document.getElementById('insert-rear');
+            const deleteFrontBtn = document.getElementById('delete-front');
+            const deleteRearBtn = document.getElementById('delete-rear');
+            
+            let deque = [];
+            
+            function updateDequeVisualization() {
+                dequeItems.innerHTML = '';
+                
+                if (deque.length === 0) {
+                    dequeItems.innerHTML = '<div class="deque-item empty">Empty Deque</div>';
+                    return;
+                }
+                
+                deque.forEach((item, index) => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'deque-item';
+                    itemElement.textContent = item;
+                    
+                    if (index === 0) {
+                        itemElement.classList.add('front');
+                        itemElement.innerHTML = `${item} <div class="item-label">FRONT</div>`;
+                    }
+                    
+                    if (index === deque.length - 1) {
+                        itemElement.classList.add('rear');
+                        itemElement.innerHTML = `${item} <div class="item-label">REAR</div>`;
+                    }
+                    
+                    dequeItems.appendChild(itemElement);
+                });
+            }
+            
+            function updateStatus(message, isError = false) {
+                statusDiv.textContent = message;
+                statusDiv.style.color = isError ? '#ff6b6b' : '#e0e0e0';
+            }
+            
+            function insertFront() {
+                const value = itemInput.value.trim();
+                
+                if (!value) {
+                    updateStatus('Error: Please enter a value before inserting.', true);
+                    return;
+                }
+                
+                deque.unshift(value);
+                updateDequeVisualization();
+                updateStatus(`Success: Inserted "${value}" at the front of the deque.`);
+                itemInput.value = '';
+                itemInput.focus();
+            }
+            
+            function insertRear() {
+                const value = itemInput.value.trim();
+                
+                if (!value) {
+                    updateStatus('Error: Please enter a value before inserting.', true);
+                    return;
+                }
+                
+                deque.push(value);
+                updateDequeVisualization();
+                updateStatus(`Success: Inserted "${value}" at the rear of the deque.`);
+                itemInput.value = '';
+                itemInput.focus();
+            }
+            
+            function deleteFront() {
+                if (deque.length === 0) {
+                    updateStatus('Error: Deque is empty. Cannot delete from front.', true);
+                    return;
+                }
+                
+                const value = deque.shift();
+                updateDequeVisualization();
+                updateStatus(`Success: Removed "${value}" from the front of the deque.`);
+            }
+            
+            function deleteRear() {
+                if (deque.length === 0) {
+                    updateStatus('Error: Deque is empty. Cannot delete from rear.', true);
+                    return;
+                }
+                
+                const value = deque.pop();
+                updateDequeVisualization();
+                updateStatus(`Success: Removed "${value}" from the rear of the deque.`);
+            }
+            
+            // Event listeners
+            insertFrontBtn.addEventListener('click', insertFront);
+            insertRearBtn.addEventListener('click', insertRear);
+            deleteFrontBtn.addEventListener('click', deleteFront);
+            deleteRearBtn.addEventListener('click', deleteRear);
+            
+            // Allow Enter key to trigger insertRear for convenience
+            itemInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    insertRear();
+                }
+            });
+            
+            // Initialize visualization
+            updateDequeVisualization();
+        });
+    </script>
+</body>
+</html>
