@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palindrome Checker with Deque Visualization</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 30px 0;
+        }
+        
+        .input-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            flex: 1;
+            min-width: 300px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        
+        .visualization {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            flex: 2;
+            min-width: 500px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #ffcc00;
+        }
+        
+        .input-group {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        input[type="text"] {
+            flex: 1;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 8px 0 0 8px;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            background: #ffcc00;
+            color: #1a2a6c;
+            font-weight: bold;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+        
+        button:hover {
+            background: #ffd84d;
+            transform: translateY(-2px);
+        }
+        
+        .examples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .example-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 8px 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .example-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .deque-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        
+        .deque {
+            display: flex;
+            justify-content: center;
+            min-height: 200px;
+            width: 100%;
+            margin: 30px 0;
+        }
+        
+        .deque-item {
+            width: 70px;
+            height: 70px;
+            margin: 0 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .deque-item.front {
+            background: rgba(0, 230, 118, 0.3);
+            border: 2px solid #00e676;
+            transform: translateY(-10px);
+            box-shadow: 0 5px 15px rgba(0, 230, 118, 0.4);
+        }
+        
+        .deque-item.back {
+            background: rgba(41, 121, 255, 0.3);
+            border: 2px solid #2979ff;
+            transform: translateY(-10px);
+            box-shadow: 0 5px 15px rgba(41, 121, 255, 0.4);
+        }
+        
+        .deque-item.removed {
+            opacity: 0.3;
+            transform: scale(0.9);
+        }
+        
+        .deque-item.matched {
+            background: rgba(0, 230, 118, 0.5);
+            border: 2px solid #00e676;
+        }
+        
+        .deque-item.mismatched {
+            background: rgba(255, 61, 0, 0.5);
+            border: 2px solid #ff3d00;
+        }
+        
+        .deque-labels {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .front-label, .back-label {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        .front-label {
+            background: rgba(0, 230, 118, 0.3);
+            border: 1px solid #00e676;
+        }
+        
+        .back-label {
+            background: rgba(41, 121, 255, 0.3);
+            border: 1px solid #2979ff;
+        }
+        
+        .info-panel {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .step-info {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        
+        .result {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .palindrome {
+            background: rgba(0, 230, 118, 0.3);
+            border: 2px solid #00e676;
+        }
+        
+        .not-palindrome {
+            background: rgba(255, 61, 0, 0.3);
+            border: 2px solid #ff3d00;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .algorithm {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        
+        .algorithm-steps {
+            margin-top: 20px;
+            padding-left: 20px;
+        }
+        
+        .algorithm-steps li {
+            margin-bottom: 12px;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+        
+        .complexity {
+            margin-top: 20px;
+            font-style: italic;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .input-section, .visualization {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Palindrome Checker with Deque</h1>
+            <p class="subtitle">Visualize how a double-ended queue (deque) can efficiently check whether a string is a palindrome by comparing characters from both ends.</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="input-section">
+                <h2>Test a String</h2>
+                <div class="input-group">
+                    <input type="text" id="inputString" placeholder="Enter a string to check..." value="A man, a plan, a canal, Panama!">
+                    <button id="checkBtn">Check Palindrome</button>
+                </div>
+                
+                <p>Try these examples:</p>
+                <div class="examples">
+                    <div class="example-btn" data-string="racecar">racecar</div>
+                    <div class="example-btn" data-string="Hello">Hello</div>
+                    <div class="example-btn" data-string="Was it a car or a cat I saw?">Was it a car or a cat I saw?</div>
+                    <div class="example-btn" data-string="Deed">Deed</div>
+                    <div class="example-btn" data-string="12321">12321</div>
+                    <div class="example-btn" data-string="Python">Python</div>
+                </div>
+                
+                <div class="info-panel">
+                    <div class="step-info" id="stepInfo">Enter a string and click "Check Palindrome" to start the visualization.</div>
+                    <div class="result" id="result"></div>
+                </div>
+            </div>
+            
+            <div class="visualization">
+                <h2>Deque Visualization</h2>
+                <div class="deque-container">
+                    <div class="deque" id="dequeDisplay"></div>
+                    <div class="deque-labels">
+                        <div class="front-label">Front</div>
+                        <div class="back-label">Back</div>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button id="prevStep">Previous Step</button>
+                    <button id="nextStep">Next Step</button>
+                    <button id="resetBtn">Reset</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="algorithm">
+            <h2>How the Deque Algorithm Works</h2>
+            <ol class="algorithm-steps">
+                <li>Process the input string: convert to lowercase and remove non-alphanumeric characters.</li>
+                <li>Load all characters into a deque (double-ended queue).</li>
+                <li>While the deque has more than one character:
+                    <ul style="margin-top: 10px; margin-left: 20px;">
+                        <li>Remove the front character and the back character</li>
+                        <li>Compare these two characters</li>
+                        <li>If they don't match, the string is not a palindrome</li>
+                    </ul>
+                </li>
+                <li>If all pairs of characters match (or only one character remains), the string is a palindrome.</li>
+            </ol>
+            <p class="complexity">Time Complexity: O(n) - Each character is processed exactly once.</p>
+        </div>
+        
+        <footer>
+            <p>Created with HTML, CSS, and JavaScript | Double-Ended Queue Visualization</p>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM elements
+            const inputString = document.getElementById('inputString');
+            const checkBtn = document.getElementById('checkBtn');
+            const dequeDisplay = document.getElementById('dequeDisplay');
+            const stepInfo = document.getElementById('stepInfo');
+            const resultDiv = document.getElementById('result');
+            const prevStepBtn = document.getElementById('prevStep');
+            const nextStepBtn = document.getElementById('nextStep');
+            const resetBtn = document.getElementById('resetBtn');
+            const exampleBtns = document.querySelectorAll('.example-btn');
+            
+            // Algorithm state
+            let originalString = '';
+            let processedString = '';
+            let deque = [];
+            let steps = [];
+            let currentStep = 0;
+            
+            // Initialize
+            resetBtn.click();
+            
+            // Event listeners
+            checkBtn.addEventListener('click', function() {
+                originalString = inputString.value;
+                processAndRun();
+            });
+            
+            prevStepBtn.addEventListener('click', function() {
+                if (currentStep > 0) {
+                    currentStep--;
+                    renderStep();
+                }
+            });
+            
+            nextStepBtn.addEventListener('click', function() {
+                if (currentStep < steps.length - 1) {
+                    currentStep++;
+                    renderStep();
+                }
+            });
+            
+            resetBtn.addEventListener('click', function() {
+                inputString.value = "A man, a plan, a canal, Panama!";
+                originalString = inputString.value;
+                processAndRun();
+            });
+            
+            exampleBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    inputString.value = this.getAttribute('data-string');
+                    originalString = inputString.value;
+                    processAndRun();
+                });
+            });
+            
+            // Process the string and run the algorithm
+            function processAndRun() {
+                // Process the string
+                processedString = originalString.toLowerCase().replace(/[^a-z0-9]/g, '');
+                
+                // Reset state
+                deque = processedString.split('');
+                steps = [];
+                currentStep = 0;
+                
+                // If empty string
+                if (processedString === '') {
+                    steps.push({
+                        deque: [],
+                        message: "The string is empty. Please enter a valid string.",
+                        result: null
+                    });
+                    renderStep();
+                    return;
+                }
+                
+                // Initial step
+                steps.push({
+                    deque: [...deque],
+                    message: `Starting with the processed string: "${processedString}"`,
+                    result: null
+                });
+                
+                let isPalindrome = true;
+                let stepMessage = '';
+                
+                // Algorithm steps
+                while (deque.length > 1) {
+                    const frontChar = deque.shift();
+                    const backChar = deque.pop();
+                    
+                    if (frontChar !== backChar) {
+                        isPalindrome = false;
+                        stepMessage = `Mismatch found: '${frontChar}' ≠ '${backChar}'. Not a palindrome!`;
+                        steps.push({
+                            deque: [...deque],
+                            frontChar,
+                            backChar,
+                            match: false,
+                            message: stepMessage,
+                            result: false
+                        });
+                        break;
+                    }
+                    
+                    stepMessage = `Match found: '${frontChar}' = '${backChar}'. Removing these characters.`;
+                    steps.push({
+                        deque: [...deque],
+                        frontChar,
+                        backChar,
+                        match: true,
+                        message: stepMessage,
+                        result: null
+                    });
+                }
+                
+                // Final step
+                if (isPalindrome) {
+                    if (deque.length === 0) {
+                        stepMessage = "All characters matched! The deque is now empty.";
+                    } else {
+                        stepMessage = `Only one character left: '${deque[0]}'. All characters matched!`;
+                    }
+                    
+                    steps.push({
+                        deque: [...deque],
+                        message: stepMessage,
+                        result: true
+                    });
+                }
+                
+                // Render the first step
+                renderStep();
+            }
+            
+            // Render the current step
+            function renderStep() {
+                const step = steps[currentStep];
+                if (!step) return;
+                
+                // Update step info
+                stepInfo.textContent = step.message;
+                
+                // Clear deque display
+                dequeDisplay.innerHTML = '';
+                
+                // Render deque items
+                step.deque.forEach((char, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'deque-item';
+                    item.textContent = char;
+                    
+                    // Highlight front and back if they exist
+                    if (index === 0 && step.deque.length > 0) {
+                        item.classList.add('front');
+                    }
+                    if (index === step.deque.length - 1 && step.deque.length > 0) {
+                        item.classList.add('back');
+                    }
+                    
+                    dequeDisplay.appendChild(item);
+                });
+                
+                // Show removed characters if applicable
+                if (step.frontChar && step.backChar) {
+                    const frontItem = document.createElement('div');
+                    frontItem.className = 'deque-item removed';
+                    frontItem.classList.add(step.match ? 'matched' : 'mismatched');
+                    frontItem.textContent = step.frontChar;
+                    frontItem.style.position = 'absolute';
+                    frontItem.style.left = '20%';
+                    frontItem.style.top = '20px';
+                    dequeDisplay.appendChild(frontItem);
+                    
+                    const backItem = document.createElement('div');
+                    backItem.className = 'deque-item removed';
+                    backItem.classList.add(step.match ? 'matched' : 'mismatched');
+                    backItem.textContent = step.backChar;
+                    backItem.style.position = 'absolute';
+                    backItem.style.right = '20%';
+                    backItem.style.top = '20px';
+                    dequeDisplay.appendChild(backItem);
+                }
+                
+                // Update result display
+                resultDiv.textContent = '';
+                resultDiv.className = 'result';
+                
+                if (step.result === true) {
+                    resultDiv.textContent = '✅ This is a PALINDROME!';
+                    resultDiv.classList.add('palindrome');
+                } else if (step.result === false) {
+                    resultDiv.textContent = '❌ This is NOT a palindrome';
+                    resultDiv.classList.add('not-palindrome');
+                }
+                
+                // Update button states
+                prevStepBtn.disabled = currentStep === 0;
+                nextStepBtn.disabled = currentStep === steps.length - 1;
+            }
+        });
+    </script>
+</body>
+</html>
