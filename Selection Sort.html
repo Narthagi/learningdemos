@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selection Sort Visualization</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #2c3e50, #4a235a);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, #3498db, #9b59b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 20px;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+        
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .visualization {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(25, 30, 60, 0.85);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+        }
+        
+        .controls {
+            flex: 0 0 350px;
+            background: rgba(25, 30, 60, 0.85);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+        }
+        
+        .array-container {
+            height: 300px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 4px;
+            padding: 20px;
+            margin-top: 20px;
+            background: rgba(10, 15, 35, 0.5);
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        .array-bar {
+            width: 30px;
+            background: linear-gradient(to top, #3498db, #2980b9);
+            border-radius: 5px 5px 0 0;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            position: relative;
+        }
+        
+        .comparing {
+            background: linear-gradient(to top, #e74c3c, #c0392b) !important;
+        }
+        
+        .min-element {
+            background: linear-gradient(to top, #2ecc71, #27ae60) !important;
+        }
+        
+        .swapping {
+            background: linear-gradient(to top, #f39c12, #d35400) !important;
+            animation: pulse 0.5s ease-in-out;
+        }
+        
+        .sorted {
+            background: linear-gradient(to top, #9b59b6, #8e44ad) !important;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .control-group {
+            margin-bottom: 25px;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #3498db;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
+        }
+        
+        h3 {
+            font-size: 1.3rem;
+            margin: 20px 0 15px;
+            color: #f39c12;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: #2c3e50;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+        
+        .value-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(to right, #3498db, #2980b9);
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(to right, #2980b9, #3498db);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button:disabled {
+            background: #7f8c8d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        #reset-btn {
+            background: linear-gradient(to right, #e74c3c, #c0392b);
+        }
+        
+        #reset-btn:hover {
+            background: linear-gradient(to right, #c0392b, #e74c3c);
+        }
+        
+        .algorithm-info {
+            background: rgba(10, 15, 35, 0.5);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 25px;
+            line-height: 1.6;
+        }
+        
+        .algorithm-info p {
+            margin-bottom: 15px;
+        }
+        
+        .algorithm-steps {
+            margin-top: 15px;
+            padding-left: 20px;
+        }
+        
+        .algorithm-steps li {
+            margin-bottom: 10px;
+        }
+        
+        .status-bar {
+            background: rgba(10, 15, 35, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-weight: 500;
+            text-align: center;
+            min-height: 54px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        
+        .highlight {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+            }
+            
+            .controls {
+                flex: 1;
+            }
+            
+            .buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Selection Sort Visualization</h1>
+            <p class="subtitle">Explore how the selection sort algorithm works step by step. Adjust the array size and speed to see how it selects the smallest element and moves it to the correct position.</p>
+        </header>
+        
+        <div class="content">
+            <div class="visualization">
+                <h2>Sorting Visualization</h2>
+                <div class="array-container" id="array-container"></div>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #3498db;"></div>
+                        <span>Unsorted</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #e74c3c;"></div>
+                        <span>Comparing</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #2ecc71;"></div>
+                        <span>Minimum</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #f39c12;"></div>
+                        <span>Swapping</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #9b59b6;"></div>
+                        <span>Sorted</span>
+                    </div>
+                </div>
+                <div class="status-bar" id="status">Ready to sort. Click "Generate New Array" to begin!</div>
+            </div>
+            
+            <div class="controls">
+                <h2>Controls</h2>
+                
+                <div class="control-group">
+                    <h3>Array Configuration</h3>
+                    <label for="array-size">Array Size: <span id="size-value">10</span></label>
+                    <input type="range" id="array-size" min="5" max="20" value="10">
+                    
+                    <label for="sort-speed">Sort Speed: <span id="speed-value">Medium</span></label>
+                    <input type="range" id="sort-speed" min="1" max="10" value="5">
+                </div>
+                
+                <div class="buttons">
+                    <button id="generate-btn">Generate New Array</button>
+                    <button id="sort-btn">Start Sorting</button>
+                    <button id="step-btn">Next Step</button>
+                    <button id="reset-btn">Reset</button>
+                </div>
+                
+                <div class="algorithm-info">
+                    <h3>How Selection Sort Works</h3>
+                    <p>Selection sort is a simple sorting algorithm that divides the list into two parts: the sorted part on the left and the unsorted part on the right.</p>
+                    <p>In each pass:</p>
+                    <ul class="algorithm-steps">
+                        <li>Find the smallest element in the unsorted portion</li>
+                        <li>Swap it with the leftmost element of the unsorted portion</li>
+                        <li>This element becomes part of the sorted portion</li>
+                        <li>Repeat until the entire list is sorted</li>
+                    </ul>
+                    <p>Key characteristics:</p>
+                    <ul class="algorithm-steps">
+                        <li>Time complexity: O(n²) in all cases</li>
+                        <li>Makes only O(n) swaps (good when memory write is expensive)</li>
+                        <li>Performs well on small lists</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elements
+            const arrayContainer = document.getElementById('array-container');
+            const generateBtn = document.getElementById('generate-btn');
+            const sortBtn = document.getElementById('sort-btn');
+            const stepBtn = document.getElementById('step-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const arraySizeSlider = document.getElementById('array-size');
+            const sizeValue = document.getElementById('size-value');
+            const sortSpeedSlider = document.getElementById('sort-speed');
+            const speedValue = document.getElementById('speed-value');
+            const status = document.getElementById('status');
+            
+            // State variables
+            let array = [];
+            let arraySize = 10;
+            let sortSpeed = 5;
+            let isSorting = false;
+            let sortingInterval;
+            let currentPass = 0;
+            let minIndex = 0;
+            let currentIndex = 1;
+            let sortedIndex = 0;
+            
+            // Initialize
+            updateSpeedLabel();
+            generateNewArray();
+            
+            // Event Listeners
+            generateBtn.addEventListener('click', generateNewArray);
+            sortBtn.addEventListener('click', startSorting);
+            stepBtn.addEventListener('click', performSortStep);
+            resetBtn.addEventListener('click', resetSorting);
+            
+            arraySizeSlider.addEventListener('input', () => {
+                arraySize = parseInt(arraySizeSlider.value);
+                sizeValue.textContent = arraySize;
+                generateNewArray();
+            });
+            
+            sortSpeedSlider.addEventListener('input', () => {
+                sortSpeed = parseInt(sortSpeedSlider.value);
+                updateSpeedLabel();
+            });
+            
+            // Functions
+            function generateNewArray() {
+                resetSorting();
+                array = [];
+                for (let i = 0; i < arraySize; i++) {
+                    array.push(Math.floor(Math.random() * 95) + 5); // Values between 5-100
+                }
+                renderArray();
+                status.textContent = "New array generated. Ready to sort!";
+            }
+            
+            function renderArray() {
+                arrayContainer.innerHTML = '';
+                const containerWidth = arrayContainer.clientWidth;
+                const barWidth = Math.min(30, (containerWidth - (arraySize * 4)) / arraySize);
+                
+                array.forEach((value, index) => {
+                    const bar = document.createElement('div');
+                    bar.className = 'array-bar';
+                    bar.style.height = `${value * 2.5}px`;
+                    bar.style.width = `${barWidth}px`;
+                    bar.textContent = value;
+                    
+                    if (index < sortedIndex) {
+                        bar.classList.add('sorted');
+                    } else if (index === minIndex) {
+                        bar.classList.add('min-element');
+                    } else if (index === currentIndex) {
+                        bar.classList.add('comparing');
+                    }
+                    
+                    arrayContainer.appendChild(bar);
+                });
+            }
+            
+            function startSorting() {
+                if (isSorting) return;
+                if (currentPass >= arraySize - 1) return;
+                
+                isSorting = true;
+                sortBtn.disabled = true;
+                stepBtn.disabled = true;
+                generateBtn.disabled = true;
+                arraySizeSlider.disabled = true;
+                
+                status.textContent = "Sorting in progress...";
+                
+                sortingInterval = setInterval(() => {
+                    if (!performSortStep()) {
+                        clearInterval(sortingInterval);
+                        isSorting = false;
+                        sortBtn.disabled = false;
+                        stepBtn.disabled = false;
+                        generateBtn.disabled = false;
+                        arraySizeSlider.disabled = false;
+                    }
+                }, 600 - (sortSpeed * 50));
+            }
+            
+            function performSortStep() {
+                // Check if sorting is complete
+                if (currentPass >= arraySize - 1) {
+                    sortedIndex = arraySize;
+                    renderArray();
+                    status.textContent = "Array is fully sorted!";
+                    return false;
+                }
+                
+                // Highlight the current comparison
+                status.textContent = `Pass ${currentPass + 1}: Comparing ${array[currentIndex]} at position ${currentIndex} with current minimum ${array[minIndex]} at position ${minIndex}`;
+                renderArray();
+                
+                // Check if current element is smaller than current min
+                if (array[currentIndex] < array[minIndex]) {
+                    minIndex = currentIndex;
+                    status.textContent = `Pass ${currentPass + 1}: New minimum found! ${array[minIndex]} at position ${minIndex}`;
+                    renderArray();
+                }
+                
+                // Move to next element
+                currentIndex++;
+                
+                // Check if we've reached the end of the pass
+                if (currentIndex >= arraySize) {
+                    // Swap if minIndex is not the currentPass index
+                    if (minIndex !== currentPass) {
+                        // Highlight for swap
+                        status.textContent = `Pass ${currentPass + 1}: Swapping ${array[currentPass]} at position ${currentPass} with minimum ${array[minIndex]} at position ${minIndex}`;
+                        renderArray();
+                        
+                        // Perform swap
+                        [array[currentPass], array[minIndex]] = [array[minIndex], array[currentPass]];
+                        
+                        // Add swap animation
+                        const bars = arrayContainer.querySelectorAll('.array-bar');
+                        bars[currentPass].classList.add('swapping');
+                        bars[minIndex].classList.add('swapping');
+                    } else {
+                        status.textContent = `Pass ${currentPass + 1}: Minimum element ${array[minIndex]} is already at position ${currentPass}`;
+                    }
+                    
+                    // Move the sorted boundary
+                    sortedIndex = currentPass + 1;
+                    
+                    // Prepare for next pass
+                    currentPass++;
+                    minIndex = currentPass;
+                    currentIndex = currentPass + 1;
+                    
+                    // If we've completed all passes
+                    if (currentPass >= arraySize - 1) {
+                        sortedIndex = arraySize;
+                        renderArray();
+                        status.textContent = "Array is fully sorted!";
+                        return false;
+                    }
+                    
+                    return true;
+                }
+                
+                return true;
+            }
+            
+            function resetSorting() {
+                clearInterval(sortingInterval);
+                isSorting = false;
+                currentPass = 0;
+                minIndex = 0;
+                currentIndex = 1;
+                sortedIndex = 0;
+                renderArray();
+                
+                sortBtn.disabled = false;
+                stepBtn.disabled = false;
+                generateBtn.disabled = false;
+                arraySizeSlider.disabled = false;
+                
+                status.textContent = "Sorting reset. Ready to sort!";
+            }
+            
+            function updateSpeedLabel() {
+                const speeds = ['Very Slow', 'Slow', 'Medium Slow', 'Medium', 'Medium Fast', 'Fast', 'Very Fast', 'Ultra Fast', 'Lightning', 'Instant'];
+                speedValue.textContent = speeds[sortSpeed - 1];
+            }
+        });
+    </script>
+</body>
+</html>
