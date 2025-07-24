@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Machine Learning Interactive Learning Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #2ec4b6;
+            --warning: #ff9f1c;
+            --danger: #e71d36;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: var(--light);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        header {
+            background: rgba(10, 25, 47, 0.95);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            font-size: 2.5rem;
+            color: var(--accent);
+        }
+
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #4cc9f0, #4361ee);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .progress-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            height: 10px;
+            width: 300px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 65%;
+            background: linear-gradient(to right, var(--accent), var(--primary));
+            border-radius: 20px;
+            transition: var(--transition);
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #f8f9fa, #4cc9f0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .tab-btn {
+            background: rgba(67, 97, 238, 0.2);
+            border: none;
+            color: var(--light);
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+        }
+
+        .content-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .content-section h2 {
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            font-size: 2.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content-section p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .content-section ul {
+            padding-left: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .content-section li {
+            margin-bottom: 0.8rem;
+            position: relative;
+        }
+
+        .content-section li:before {
+            content: "•";
+            color: var(--accent);
+            font-weight: bold;
+            position: absolute;
+            left: -20px;
+        }
+
+        .ml-process {
+            display: flex;
+            justify-content: space-between;
+            margin: 2rem 0;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .process-step {
+            background: rgba(58, 12, 163, 0.3);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+            transition: var(--transition);
+        }
+
+        .process-step:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            background: rgba(58, 12, 163, 0.5);
+        }
+
+        .process-step i {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .process-step h3 {
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .quiz-header h2 {
+            color: var(--accent);
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .question {
+            background: rgba(10, 25, 47, 0.7);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .question h3 {
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .option {
+            background: rgba(67, 97, 238, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .option:hover {
+            background: rgba(67, 97, 238, 0.4);
+        }
+
+        .option.selected {
+            background: var(--primary);
+            box-shadow: 0 0 0 2px var(--accent);
+        }
+
+        .quiz-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+        }
+
+        .result-container {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(46, 196, 182, 0.1);
+            border-radius: 10px;
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .result-container.show {
+            display: block;
+        }
+
+        .score {
+            font-size: 5rem;
+            font-weight: bold;
+            background: linear-gradient(to right, #4cc9f0, #4361ee);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin: 1rem 0;
+        }
+
+        .feedback {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .highlight {
+            background: rgba(76, 201, 240, 0.2);
+            padding: 0 5px;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+            
+            .ml-process {
+                flex-direction: column;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .progress-container {
+                width: 100%;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-brain logo-icon"></i>
+                    <div class="logo-text">ML Learning Hub</div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Machine Learning Fundamentals</h1>
+            <p>Learn how computers can learn from data without explicit programming, and test your knowledge with our interactive quiz</p>
+            
+            <div class="tabs">
+                <button class="tab-btn active">Overview</button>
+                <button class="tab-btn">Concepts</button>
+                <button class="tab-btn">Process</button>
+                <button class="tab-btn">Quiz</button>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <section class="content-section">
+            <h2><i class="fas fa-lightbulb"></i> What is Machine Learning?</h2>
+            <p>Machine Learning (ML) is a <span class="highlight">subsystem of Artificial Intelligence</span> that enables computers to learn from data using statistical techniques, without being explicitly programmed by humans. It comprises algorithms that use data to learn on their own and make predictions.</p>
+            
+            <p>These algorithms, called <span class="highlight">models</span>, are first trained and tested using training data and testing data respectively. After successive trainings, once these models achieve an acceptable level of accuracy, they are used to make predictions about new and unknown data.</p>
+        </section>
+
+        <section class="content-section">
+            <h2><i class="fas fa-cogs"></i> How Machine Learning Works</h2>
+            
+            <div class="ml-process">
+                <div class="process-step">
+                    <i class="fas fa-database"></i>
+                    <h3>Data Collection</h3>
+                    <p>Gathering relevant data from various sources to train the model</p>
+                </div>
+                
+                <div class="process-step">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Data Preparation</h3>
+                    <p>Cleaning, transforming, and organizing data for training</p>
+                </div>
+                
+                <div class="process-step">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h3>Model Training</h3>
+                    <p>Using algorithms to learn patterns from training data</p>
+                </div>
+                
+                <div class="process-step">
+                    <i class="fas fa-vial"></i>
+                    <h3>Model Evaluation</h3>
+                    <p>Testing model performance with unseen testing data</p>
+                </div>
+                
+                <div class="process-step">
+                    <i class="fas fa-rocket"></i>
+                    <h3>Deployment</h3>
+                    <p>Using the trained model to make predictions on new data</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2><i class="fas fa-project-diagram"></i> Key Concepts</h2>
+            
+            <ul>
+                <li><span class="highlight">Training Data:</span> The dataset used to train the machine learning model</li>
+                <li><span class="highlight">Testing Data:</span> A separate dataset used to evaluate model performance</li>
+                <li><span class="highlight">Features:</span> The input variables used by the model to make predictions</li>
+                <li><span class="highlight">Labels/Targets:</span> The output variable the model is trying to predict</li>
+                <li><span class="highlight">Algorithms:</span> Mathematical procedures that learn patterns from data (e.g., Linear Regression, Decision Trees, Neural Networks)</li>
+                <li><span class="highlight">Overfitting:</span> When a model learns training data too well but fails to generalize to new data</li>
+                <li><span class="highlight">Underfitting:</span> When a model fails to capture underlying patterns in the data</li>
+            </ul>
+        </section>
+
+        <section class="quiz-container">
+            <div class="quiz-header">
+                <h2><i class="fas fa-tasks"></i> Test Your Knowledge</h2>
+                <p>Complete this interactive quiz to reinforce your understanding</p>
+            </div>
+            
+            <div class="question">
+                <h3>1. What is the primary purpose of machine learning?</h3>
+                <div class="options">
+                    <div class="option">To program computers with explicit instructions</div>
+                    <div class="option selected">To enable computers to learn from data without explicit programming</div>
+                    <div class="option">To create faster computer hardware</div>
+                    <div class="option">To develop new programming languages</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3>2. What are the two main datasets used in machine learning?</h3>
+                <div class="options">
+                    <div class="option">Input and Output data</div>
+                    <div class="option">Training and Testing data</div>
+                    <div class="option selected">Feature and Label data</div>
+                    <div class="option">Raw and Processed data</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3>3. What do we call the algorithms that learn from data in ML?</h3>
+                <div class="options">
+                    <div class="option">Functions</div>
+                    <div class="option">Programs</div>
+                    <div class="option selected">Models</div>
+                    <div class="option">Templates</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3>4. What is the final step before deploying an ML model?</h3>
+                <div class="options">
+                    <div class="option">Collecting more data</div>
+                    <div class="option">Training the model again</div>
+                    <div class="option selected">Evaluating with testing data</div>
+                    <div class="option">Choosing different algorithms</div>
+                </div>
+            </div>
+            
+            <div class="question">
+                <h3>5. What happens when a model is overfitted?</h3>
+                <div class="options">
+                    <div class="option">It performs well on both training and testing data</div>
+                    <div class="option selected">It performs well on training data but poorly on new data</div>
+                    <div class="option">It performs poorly on both training and testing data</div>
+                    <div class="option">It requires less training data</div>
+                </div>
+            </div>
+            
+            <div class="quiz-footer">
+                <div>Question 1 of 5</div>
+                <button class="btn"><i class="fas fa-arrow-right"></i> Submit Quiz</button>
+            </div>
+            
+            <div class="result-container">
+                <h2><i class="fas fa-trophy"></i> Quiz Results</h2>
+                <div class="score">80%</div>
+                <div class="feedback">Great job! You have a solid understanding of ML fundamentals</div>
+                <p>You answered 4 out of 5 questions correctly</p>
+                <button class="btn"><i class="fas fa-redo"></i> Try Again</button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Quiz interaction
+        const options = document.querySelectorAll('.option');
+        const submitBtn = document.querySelector('.btn');
+        const resultContainer = document.querySelector('.result-container');
+        
+        options.forEach(option => {
+            option.addEventListener('click', function() {
+                // Remove selected class from siblings
+                const siblings = this.parentElement.children;
+                for (let sibling of siblings) {
+                    sibling.classList.remove('selected');
+                }
+                
+                // Add selected class to clicked option
+                this.classList.add('selected');
+            });
+        });
+        
+        // Submit button functionality
+        submitBtn.addEventListener('click', function() {
+            // Show results
+            resultContainer.classList.add('show');
+            
+            // Scroll to results
+            resultContainer.scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        // Tab switching simulation
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all buttons
+                tabBtns.forEach(b => b.classList.remove('active'));
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Scroll to quiz section if clicked
+                if (this.textContent === 'Quiz') {
+                    document.querySelector('.quiz-container').scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+        
+        // Simulate progress bar animation
+        window.addEventListener('load', function() {
+            const progressBar = document.querySelector('.progress-bar');
+            let width = 0;
+            const interval = setInterval(() => {
+                if (width >= 65) {
+                    clearInterval(interval);
+                } else {
+                    width++;
+                    progressBar.style.width = width + '%';
+                }
+            }, 20);
+        });
+    </script>
+</body>
+</html>
