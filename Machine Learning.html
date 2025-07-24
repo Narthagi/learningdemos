@@ -3,25 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Machine Learning Interactive Learning Platform</title>
+    <title>Natural Language Processing Learning Hub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif;
         }
 
         :root {
-            --primary: #4361ee;
-            --secondary: #3a0ca3;
-            --accent: #4cc9f0;
+            --primary: #4e54c8;
+            --secondary: #8f94fb;
+            --accent: #00d2ff;
             --light: #f8f9fa;
-            --dark: #212529;
-            --success: #2ec4b6;
-            --warning: #ff9f1c;
-            --danger: #e71d36;
+            --dark: #0f172a;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
             --transition: all 0.3s ease;
         }
 
@@ -31,10 +32,32 @@
             line-height: 1.6;
             min-height: 100vh;
             padding-bottom: 50px;
+            overflow-x: hidden;
+        }
+
+        .header-wave {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+            z-index: -1;
+        }
+
+        .header-wave svg {
+            position: relative;
+            display: block;
+            width: calc(100% + 1.3px);
+            height: 150px;
+        }
+
+        .header-wave .shape-fill {
+            fill: rgba(79, 84, 200, 0.15);
         }
 
         header {
-            background: rgba(10, 25, 47, 0.95);
+            background: rgba(15, 23, 42, 0.95);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
             padding: 1.5rem 0;
             position: sticky;
@@ -63,12 +86,13 @@
         .logo-icon {
             font-size: 2.5rem;
             color: var(--accent);
+            animation: pulse 2s infinite;
         }
 
         .logo-text {
             font-size: 1.8rem;
             font-weight: 700;
-            background: linear-gradient(to right, #4cc9f0, #4361ee);
+            background: linear-gradient(to right, #4cc9f0, #8f94fb);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -92,7 +116,7 @@
 
         .hero {
             text-align: center;
-            padding: 4rem 0;
+            padding: 4rem 0 2rem;
             max-width: 800px;
             margin: 0 auto;
         }
@@ -100,10 +124,11 @@
         .hero h1 {
             font-size: 3.5rem;
             margin-bottom: 1rem;
-            background: linear-gradient(to right, #f8f9fa, #4cc9f0);
+            background: linear-gradient(to right, #f8f9fa, #8f94fb);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
 
         .hero p {
@@ -117,10 +142,11 @@
             justify-content: center;
             gap: 10px;
             margin-bottom: 2rem;
+            flex-wrap: wrap;
         }
 
         .tab-btn {
-            background: rgba(67, 97, 238, 0.2);
+            background: rgba(143, 148, 251, 0.2);
             border: none;
             color: var(--light);
             padding: 12px 25px;
@@ -128,12 +154,13 @@
             font-size: 1rem;
             cursor: pointer;
             transition: var(--transition);
+            backdrop-filter: blur(5px);
         }
 
         .tab-btn.active, .tab-btn:hover {
             background: var(--primary);
             transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+            box-shadow: 0 5px 15px rgba(78, 84, 200, 0.4);
         }
 
         .content-section {
@@ -179,38 +206,63 @@
             left: -20px;
         }
 
-        .ml-process {
-            display: flex;
-            justify-content: space-between;
-            margin: 2rem 0;
+        .nlp-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
-            flex-wrap: wrap;
+            margin: 2rem 0;
         }
 
-        .process-step {
-            background: rgba(58, 12, 163, 0.3);
+        .feature-card {
+            background: rgba(15, 23, 42, 0.7);
             border-radius: 10px;
             padding: 1.5rem;
-            text-align: center;
-            flex: 1;
-            min-width: 200px;
             transition: var(--transition);
+            border-left: 4px solid var(--accent);
         }
 
-        .process-step:hover {
-            transform: translateY(-10px);
+        .feature-card:hover {
+            transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            background: rgba(58, 12, 163, 0.5);
+            background: rgba(15, 23, 42, 0.9);
         }
 
-        .process-step i {
+        .feature-card i {
             font-size: 2.5rem;
             color: var(--accent);
             margin-bottom: 1rem;
         }
 
-        .process-step h3 {
+        .feature-card h3 {
             margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .conversion-diagram {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .conversion-box {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(0, 210, 255, 0.1);
+            border-radius: 10px;
+            width: 200px;
+            margin: 1rem;
+        }
+
+        .conversion-box i {
+            font-size: 3rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .arrow {
+            font-size: 2rem;
             color: var(--accent);
         }
 
@@ -236,10 +288,11 @@
         }
 
         .question {
-            background: rgba(10, 25, 47, 0.7);
+            background: rgba(15, 23, 42, 0.7);
             padding: 1.5rem;
             border-radius: 10px;
             margin-bottom: 1.5rem;
+            position: relative;
         }
 
         .question h3 {
@@ -249,25 +302,47 @@
 
         .options {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 15px;
         }
 
         .option {
-            background: rgba(67, 97, 238, 0.2);
+            background: rgba(143, 148, 251, 0.2);
             padding: 15px;
             border-radius: 8px;
             cursor: pointer;
             transition: var(--transition);
+            position: relative;
+            padding-left: 45px;
         }
 
         .option:hover {
-            background: rgba(67, 97, 238, 0.4);
+            background: rgba(143, 148, 251, 0.4);
         }
 
         .option.selected {
             background: var(--primary);
-            box-shadow: 0 0 0 2px var(--accent);
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+        }
+        
+        .option.correct {
+            background: rgba(16, 185, 129, 0.3);
+            border-left: 4px solid var(--success);
+        }
+        
+        .option.incorrect {
+            background: rgba(239, 68, 68, 0.3);
+            border-left: 4px solid var(--danger);
+        }
+        
+        .option input[type="radio"] {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
         }
 
         .quiz-footer {
@@ -294,13 +369,20 @@
         .btn:hover {
             background: var(--secondary);
             transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+            box-shadow: 0 5px 15px rgba(143, 148, 251, 0.4);
+        }
+        
+        .btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         .result-container {
             text-align: center;
             padding: 2rem;
-            background: rgba(46, 196, 182, 0.1);
+            background: rgba(16, 185, 129, 0.1);
             border-radius: 10px;
             margin-top: 2rem;
             display: none;
@@ -308,12 +390,13 @@
 
         .result-container.show {
             display: block;
+            animation: fadeIn 0.5s ease;
         }
 
         .score {
             font-size: 5rem;
             font-weight: bold;
-            background: linear-gradient(to right, #4cc9f0, #4361ee);
+            background: linear-gradient(to right, #00d2ff, #8f94fb);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -324,11 +407,60 @@
             font-size: 1.5rem;
             margin-bottom: 1.5rem;
         }
+        
+        .answer-feedback {
+            display: none;
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            background: rgba(0, 210, 255, 0.1);
+            border-left: 4px solid var(--accent);
+        }
+        
+        .answer-feedback.show {
+            display: block;
+        }
+        
+        .feedback-icon {
+            margin-right: 10px;
+        }
+        
+        .correct-answer {
+            color: var(--success);
+            font-weight: bold;
+        }
 
         .highlight {
-            background: rgba(76, 201, 240, 0.2);
+            background: rgba(0, 210, 255, 0.2);
             padding: 0 5px;
             border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .highlight:hover {
+            background: rgba(0, 210, 255, 0.3);
+        }
+        
+        .question-number {
+            display: inline-block;
+            background: var(--primary);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @media (max-width: 768px) {
@@ -336,7 +468,7 @@
                 grid-template-columns: 1fr;
             }
             
-            .ml-process {
+            .conversion-diagram {
                 flex-direction: column;
             }
             
@@ -352,16 +484,30 @@
             .hero h1 {
                 font-size: 2.5rem;
             }
+            
+            .feature-card {
+                min-width: 100%;
+            }
+            
+            .question h3 {
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="header-wave">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+        </svg>
+    </div>
+
     <header>
         <div class="container">
             <div class="header-content">
                 <div class="logo">
-                    <i class="fas fa-brain logo-icon"></i>
-                    <div class="logo-text">ML Learning Hub</div>
+                    <i class="fas fa-comments logo-icon"></i>
+                    <div class="logo-text">NLP Learning Hub</div>
                 </div>
                 <div class="progress-container">
                     <div class="progress-bar"></div>
@@ -372,13 +518,13 @@
 
     <section class="hero">
         <div class="container">
-            <h1>Machine Learning Fundamentals</h1>
-            <p>Learn how computers can learn from data without explicit programming, and test your knowledge with our interactive quiz</p>
+            <h1>Natural Language Processing</h1>
+            <p>Learn how computers understand, interpret, and generate human language through advanced AI techniques</p>
             
             <div class="tabs">
                 <button class="tab-btn active">Overview</button>
-                <button class="tab-btn">Concepts</button>
-                <button class="tab-btn">Process</button>
+                <button class="tab-btn">Applications</button>
+                <button class="tab-btn">Techniques</button>
                 <button class="tab-btn">Quiz</button>
             </div>
         </div>
@@ -386,192 +532,437 @@
 
     <div class="container">
         <section class="content-section">
-            <h2><i class="fas fa-lightbulb"></i> What is Machine Learning?</h2>
-            <p>Machine Learning (ML) is a <span class="highlight">subsystem of Artificial Intelligence</span> that enables computers to learn from data using statistical techniques, without being explicitly programmed by humans. It comprises algorithms that use data to learn on their own and make predictions.</p>
+            <h2><i class="fas fa-language"></i> What is Natural Language Processing?</h2>
+            <p><span class="highlight">Natural Language Processing (NLP)</span> is a branch of artificial intelligence that deals with the interaction between computers and humans using natural language. The ultimate objective of NLP is to read, decipher, understand, and make sense of human languages in a valuable way.</p>
             
-            <p>These algorithms, called <span class="highlight">models</span>, are first trained and tested using training data and testing data respectively. After successive trainings, once these models achieve an acceptable level of accuracy, they are used to make predictions about new and unknown data.</p>
+            <p>Common examples of NLP in everyday life include:</p>
+            <ul>
+                <li><span class="highlight">Predictive typing</span> in search engines that suggests the next word as you type</li>
+                <li><span class="highlight">Spell checking</span> features that identify and correct spelling mistakes</li>
+                <li>Voice-controlled assistants like Siri, Alexa, and Google Assistant</li>
+                <li>Real-time translation services like Google Translate</li>
+            </ul>
         </section>
 
         <section class="content-section">
-            <h2><i class="fas fa-cogs"></i> How Machine Learning Works</h2>
+            <h2><i class="fas fa-mobile-alt"></i> NLP in Action</h2>
+            <p>Modern NLP systems enable us to search the web or control our devices using voice commands. They perform both <span class="highlight">text-to-speech</span> (converting written text to spoken words) and <span class="highlight">speech-to-text</span> (transcribing spoken words to text) conversions.</p>
             
-            <div class="ml-process">
-                <div class="process-step">
-                    <i class="fas fa-database"></i>
-                    <h3>Data Collection</h3>
-                    <p>Gathering relevant data from various sources to train the model</p>
+            <div class="conversion-diagram">
+                <div class="conversion-box">
+                    <i class="fas fa-keyboard"></i>
+                    <h3>Text Input</h3>
+                    <p>Human provides text data</p>
                 </div>
                 
-                <div class="process-step">
-                    <i class="fas fa-chart-line"></i>
-                    <h3>Data Preparation</h3>
-                    <p>Cleaning, transforming, and organizing data for training</p>
+                <div class="arrow">→</div>
+                
+                <div class="conversion-box">
+                    <i class="fas fa-brain"></i>
+                    <h3>NLP Processing</h3>
+                    <p>Analysis and understanding</p>
                 </div>
                 
-                <div class="process-step">
-                    <i class="fas fa-graduation-cap"></i>
-                    <h3>Model Training</h3>
-                    <p>Using algorithms to learn patterns from training data</p>
+                <div class="arrow">→</div>
+                
+                <div class="conversion-box">
+                    <i class="fas fa-volume-up"></i>
+                    <h3>Speech Output</h3>
+                    <p>Text-to-Speech Conversion</p>
+                </div>
+            </div>
+            
+            <div class="conversion-diagram">
+                <div class="conversion-box">
+                    <i class="fas fa-microphone"></i>
+                    <h3>Speech Input</h3>
+                    <p>Human provides voice command</p>
                 </div>
                 
-                <div class="process-step">
-                    <i class="fas fa-vial"></i>
-                    <h3>Model Evaluation</h3>
-                    <p>Testing model performance with unseen testing data</p>
+                <div class="arrow">→</div>
+                
+                <div class="conversion-box">
+                    <i class="fas fa-brain"></i>
+                    <h3>NLP Processing</h3>
+                    <p>Analysis and understanding</p>
                 </div>
                 
-                <div class="process-step">
-                    <i class="fas fa-rocket"></i>
-                    <h3>Deployment</h3>
-                    <p>Using the trained model to make predictions on new data</p>
+                <div class="arrow">→</div>
+                
+                <div class="conversion-box">
+                    <i class="fas fa-laptop-code"></i>
+                    <h3>Action/Response</h3>
+                    <p>Device performs requested action</p>
                 </div>
             </div>
         </section>
 
         <section class="content-section">
-            <h2><i class="fas fa-project-diagram"></i> Key Concepts</h2>
+            <h2><i class="fas fa-globe"></i> Key NLP Applications</h2>
             
-            <ul>
-                <li><span class="highlight">Training Data:</span> The dataset used to train the machine learning model</li>
-                <li><span class="highlight">Testing Data:</span> A separate dataset used to evaluate model performance</li>
-                <li><span class="highlight">Features:</span> The input variables used by the model to make predictions</li>
-                <li><span class="highlight">Labels/Targets:</span> The output variable the model is trying to predict</li>
-                <li><span class="highlight">Algorithms:</span> Mathematical procedures that learn patterns from data (e.g., Linear Regression, Decision Trees, Neural Networks)</li>
-                <li><span class="highlight">Overfitting:</span> When a model learns training data too well but fails to generalize to new data</li>
-                <li><span class="highlight">Underfitting:</span> When a model fails to capture underlying patterns in the data</li>
-            </ul>
+            <div class="nlp-features">
+                <div class="feature-card">
+                    <i class="fas fa-exchange-alt"></i>
+                    <h3>Machine Translation</h3>
+                    <p>Rapidly emerging field where systems translate text between languages with increasing accuracy (e.g., Google Translate)</p>
+                </div>
+                
+                <div class="feature-card">
+                    <i class="fas fa-headset"></i>
+                    <h3>Automated Customer Service</h3>
+                    <p>Chatbots and virtual assistants that interact with customers to resolve queries and complaints</p>
+                </div>
+                
+                <div class="feature-card">
+                    <i class="fas fa-robot"></i>
+                    <h3>Virtual Assistants</h3>
+                    <p>Voice-controlled systems like Siri, Alexa, and Google Assistant that perform tasks based on voice commands</p>
+                </div>
+                
+                <div class="feature-card">
+                    <i class="fas fa-comment-medical"></i>
+                    <h3>Sentiment Analysis</h3>
+                    <p>Determining emotional tone behind words to gain insights into opinions and attitudes</p>
+                </div>
+            </div>
         </section>
 
         <section class="quiz-container">
             <div class="quiz-header">
-                <h2><i class="fas fa-tasks"></i> Test Your Knowledge</h2>
-                <p>Complete this interactive quiz to reinforce your understanding</p>
+                <h2><i class="fas fa-tasks"></i> Test Your NLP Knowledge</h2>
+                <p>Select the correct answers and submit to see your score and feedback</p>
             </div>
             
             <div class="question">
-                <h3>1. What is the primary purpose of machine learning?</h3>
+                <h3><span class="question-number">1</span> What are predictive typing and spell checking examples of?</h3>
                 <div class="options">
-                    <div class="option">To program computers with explicit instructions</div>
-                    <div class="option selected">To enable computers to learn from data without explicit programming</div>
-                    <div class="option">To create faster computer hardware</div>
-                    <div class="option">To develop new programming languages</div>
+                    <label class="option">
+                        <input type="radio" name="q1" value="a">
+                        Computer Vision
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q1" value="b">
+                        Natural Language Processing
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q1" value="c">
+                        Machine Learning
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q1" value="d">
+                        Robotics
+                    </label>
+                </div>
+                <div class="answer-feedback">
+                    <i class="fas fa-check-circle feedback-icon" style="color: #10b981;"></i>
+                    <strong>Correct Answer:</strong> <span class="correct-answer">Natural Language Processing</span>
+                    <p>Predictive typing and spell checking are classic examples of NLP applications that process human language.</p>
                 </div>
             </div>
             
             <div class="question">
-                <h3>2. What are the two main datasets used in machine learning?</h3>
+                <h3><span class="question-number">2</span> What does NLP primarily deal with?</h3>
                 <div class="options">
-                    <div class="option">Input and Output data</div>
-                    <div class="option">Training and Testing data</div>
-                    <div class="option selected">Feature and Label data</div>
-                    <div class="option">Raw and Processed data</div>
+                    <label class="option">
+                        <input type="radio" name="q2" value="a">
+                        Interaction between different computer systems
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q2" value="b">
+                        Interaction between humans and computers using human language
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q2" value="c">
+                        Processing numerical data
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q2" value="d">
+                        Creating computer hardware
+                    </label>
+                </div>
+                <div class="answer-feedback">
+                    <i class="fas fa-check-circle feedback-icon" style="color: #10b981;"></i>
+                    <strong>Correct Answer:</strong> <span class="correct-answer">Interaction between humans and computers using human language</span>
+                    <p>NLP focuses on enabling computers to understand, interpret, and generate human languages.</p>
                 </div>
             </div>
             
             <div class="question">
-                <h3>3. What do we call the algorithms that learn from data in ML?</h3>
+                <h3><span class="question-number">3</span> What are the two main conversion types in NLP systems?</h3>
                 <div class="options">
-                    <div class="option">Functions</div>
-                    <div class="option">Programs</div>
-                    <div class="option selected">Models</div>
-                    <div class="option">Templates</div>
+                    <label class="option">
+                        <input type="radio" name="q3" value="a">
+                        Image-to-text and text-to-image
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q3" value="b">
+                        Audio-to-video and video-to-audio
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q3" value="c">
+                        Text-to-speech and speech-to-text
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q3" value="d">
+                        Data-to-information and information-to-data
+                    </label>
+                </div>
+                <div class="answer-feedback">
+                    <i class="fas fa-check-circle feedback-icon" style="color: #10b981;"></i>
+                    <strong>Correct Answer:</strong> <span class="correct-answer">Text-to-speech and speech-to-text</span>
+                    <p>These conversions enable devices to understand spoken commands and respond verbally.</p>
                 </div>
             </div>
             
             <div class="question">
-                <h3>4. What is the final step before deploying an ML model?</h3>
+                <h3><span class="question-number">4</span> Which of these is an emerging application of NLP?</h3>
                 <div class="options">
-                    <div class="option">Collecting more data</div>
-                    <div class="option">Training the model again</div>
-                    <div class="option selected">Evaluating with testing data</div>
-                    <div class="option">Choosing different algorithms</div>
+                    <label class="option">
+                        <input type="radio" name="q4" value="a">
+                        3D modeling
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q4" value="b">
+                        Database management
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q4" value="c">
+                        Network security
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q4" value="d">
+                        Automated customer service
+                    </label>
+                </div>
+                <div class="answer-feedback">
+                    <i class="fas fa-check-circle feedback-icon" style="color: #10b981;"></i>
+                    <strong>Correct Answer:</strong> <span class="correct-answer">Automated customer service</span>
+                    <p>Chatbots and virtual assistants are increasingly handling customer service interactions.</p>
                 </div>
             </div>
             
             <div class="question">
-                <h3>5. What happens when a model is overfitted?</h3>
+                <h3><span class="question-number">5</span> What is machine translation in NLP?</h3>
                 <div class="options">
-                    <div class="option">It performs well on both training and testing data</div>
-                    <div class="option selected">It performs well on training data but poorly on new data</div>
-                    <div class="option">It performs poorly on both training and testing data</div>
-                    <div class="option">It requires less training data</div>
+                    <label class="option">
+                        <input type="radio" name="q5" value="a">
+                        Translating machine code to human language
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q5" value="b">
+                        Translating text from one language to another
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q5" value="c">
+                        Converting speech to commands
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q5" value="d">
+                        Transforming data into visual representations
+                    </label>
+                </div>
+                <div class="answer-feedback">
+                    <i class="fas fa-check-circle feedback-icon" style="color: #10b981;"></i>
+                    <strong>Correct Answer:</strong> <span class="correct-answer">Translating text from one language to another</span>
+                    <p>Machine translation enables services like Google Translate to convert text between languages.</p>
                 </div>
             </div>
             
             <div class="quiz-footer">
-                <div>Question 1 of 5</div>
-                <button class="btn"><i class="fas fa-arrow-right"></i> Submit Quiz</button>
+                <div>Complete all questions to submit</div>
+                <button id="submit-btn" class="btn"><i class="fas fa-paper-plane"></i> Submit Quiz</button>
             </div>
             
             <div class="result-container">
                 <h2><i class="fas fa-trophy"></i> Quiz Results</h2>
-                <div class="score">80%</div>
-                <div class="feedback">Great job! You have a solid understanding of ML fundamentals</div>
-                <p>You answered 4 out of 5 questions correctly</p>
-                <button class="btn"><i class="fas fa-redo"></i> Try Again</button>
+                <div class="score">0%</div>
+                <div class="feedback">Review your answers below</div>
+                <p>You answered <span id="correct-count">0</span> out of 5 questions correctly</p>
+                <button id="retry-btn" class="btn"><i class="fas fa-redo"></i> Try Again</button>
             </div>
         </section>
     </div>
 
     <script>
-        // Quiz interaction
-        const options = document.querySelectorAll('.option');
-        const submitBtn = document.querySelector('.btn');
-        const resultContainer = document.querySelector('.result-container');
-        
-        options.forEach(option => {
-            option.addEventListener('click', function() {
-                // Remove selected class from siblings
-                const siblings = this.parentElement.children;
-                for (let sibling of siblings) {
-                    sibling.classList.remove('selected');
-                }
-                
-                // Add selected class to clicked option
-                this.classList.add('selected');
-            });
-        });
-        
-        // Submit button functionality
-        submitBtn.addEventListener('click', function() {
-            // Show results
-            resultContainer.classList.add('show');
+        document.addEventListener('DOMContentLoaded', function() {
+            const submitBtn = document.getElementById('submit-btn');
+            const retryBtn = document.getElementById('retry-btn');
+            const resultContainer = document.querySelector('.result-container');
+            const scoreDisplay = document.querySelector('.score');
+            const correctCountDisplay = document.getElementById('correct-count');
+            const feedbackDivs = document.querySelectorAll('.answer-feedback');
+            const options = document.querySelectorAll('.option');
+            const radioInputs = document.querySelectorAll('input[type="radio"]');
             
-            // Scroll to results
-            resultContainer.scrollIntoView({ behavior: 'smooth' });
-        });
-        
-        // Tab switching simulation
-        const tabBtns = document.querySelectorAll('.tab-btn');
-        
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                // Remove active class from all buttons
-                tabBtns.forEach(b => b.classList.remove('active'));
-                
-                // Add active class to clicked button
-                this.classList.add('active');
-                
-                // Scroll to quiz section if clicked
-                if (this.textContent === 'Quiz') {
-                    document.querySelector('.quiz-container').scrollIntoView({ behavior: 'smooth' });
-                }
+            // Correct answers for each question
+            const correctAnswers = {
+                q1: 'b',
+                q2: 'b',
+                q3: 'c',
+                q4: 'd',
+                q5: 'b'
+            };
+            
+            // Track user answers
+            let userAnswers = {
+                q1: null,
+                q2: null,
+                q3: null,
+                q4: null,
+                q5: null
+            };
+            
+            // Add event listeners to radio inputs
+            radioInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    const questionName = this.name;
+                    userAnswers[questionName] = this.value;
+                    
+                    // Update UI for selected option
+                    options.forEach(option => {
+                        option.classList.remove('selected');
+                    });
+                    
+                    if (this.checked) {
+                        this.closest('.option').classList.add('selected');
+                    }
+                    
+                    // Enable submit button if all questions are answered
+                    checkAllAnswered();
+                });
             });
-        });
-        
-        // Simulate progress bar animation
-        window.addEventListener('load', function() {
-            const progressBar = document.querySelector('.progress-bar');
-            let width = 0;
-            const interval = setInterval(() => {
-                if (width >= 65) {
-                    clearInterval(interval);
-                } else {
-                    width++;
-                    progressBar.style.width = width + '%';
+            
+            // Check if all questions are answered
+            function checkAllAnswered() {
+                const allAnswered = Object.values(userAnswers).every(answer => answer !== null);
+                submitBtn.disabled = !allAnswered;
+            }
+            
+            // Submit button functionality
+            submitBtn.addEventListener('click', function() {
+                let correctCount = 0;
+                
+                // Evaluate each question
+                for (const question in userAnswers) {
+                    const userAnswer = userAnswers[question];
+                    const correctAnswer = correctAnswers[question];
+                    const questionElement = document.querySelector(`input[name="${question}"][value="${userAnswer}"]`).closest('.option');
+                    
+                    if (userAnswer === correctAnswer) {
+                        questionElement.classList.add('correct');
+                        correctCount++;
+                    } else {
+                        questionElement.classList.add('incorrect');
+                        
+                        // Highlight correct answer
+                        const correctElement = document.querySelector(`input[name="${question}"][value="${correctAnswer}"]`).closest('.option');
+                        correctElement.classList.add('correct');
+                    }
+                    
+                    // Show feedback for each question
+                    const feedback = questionElement.closest('.question').querySelector('.answer-feedback');
+                    feedback.classList.add('show');
                 }
-            }, 20);
+                
+                // Calculate and display score
+                const score = Math.round((correctCount / 5) * 100);
+                scoreDisplay.textContent = `${score}%`;
+                correctCountDisplay.textContent = correctCount;
+                
+                // Update feedback message
+                const feedbackMessage = document.querySelector('.feedback');
+                if (score === 100) {
+                    feedbackMessage.textContent = "Perfect! You're an NLP expert!";
+                } else if (score >= 70) {
+                    feedbackMessage.textContent = "Great job! You have a solid understanding of NLP";
+                } else if (score >= 50) {
+                    feedbackMessage.textContent = "Good effort! Review the material and try again";
+                } else {
+                    feedbackMessage.textContent = "Keep learning! Review the NLP concepts and try again";
+                }
+                
+                // Show results
+                resultContainer.classList.add('show');
+                
+                // Disable inputs after submission
+                radioInputs.forEach(input => {
+                    input.disabled = true;
+                });
+                
+                // Scroll to results
+                resultContainer.scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // Retry button functionality
+            retryBtn.addEventListener('click', function() {
+                // Reset UI
+                options.forEach(option => {
+                    option.classList.remove('selected', 'correct', 'incorrect');
+                });
+                
+                feedbackDivs.forEach(feedback => {
+                    feedback.classList.remove('show');
+                });
+                
+                // Reset user answers
+                userAnswers = {
+                    q1: null,
+                    q2: null,
+                    q3: null,
+                    q4: null,
+                    q5: null
+                };
+                
+                // Clear selections
+                radioInputs.forEach(input => {
+                    input.checked = false;
+                    input.disabled = false;
+                });
+                
+                // Hide results
+                resultContainer.classList.remove('show');
+                
+                // Disable submit button
+                submitBtn.disabled = true;
+                
+                // Scroll to top of quiz
+                document.querySelector('.quiz-container').scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // Simulate progress bar animation
+            window.addEventListener('load', function() {
+                const progressBar = document.querySelector('.progress-bar');
+                let width = 0;
+                const interval = setInterval(() => {
+                    if (width >= 65) {
+                        clearInterval(interval);
+                    } else {
+                        width++;
+                        progressBar.style.width = width + '%';
+                    }
+                }, 20);
+            });
+            
+            // Tab switching simulation
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Scroll to quiz section if clicked
+                    if (this.textContent === 'Quiz') {
+                        document.querySelector('.quiz-container').scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
         });
     </script>
 </body>
 </html>
+
+     
