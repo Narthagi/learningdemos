@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Immersive Experiences Technology</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #f0f8ff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        header {
+            background: rgba(10, 25, 47, 0.9);
+            padding: 1.5rem 5%;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #64ffda;
+            text-shadow: 0 0 10px rgba(100, 255, 218, 0.5);
+        }
+
+        .logo i {
+            font-size: 2.2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #ccd6f6;
+        }
+
+        .nav-link:hover {
+            background: rgba(100, 255, 218, 0.1);
+            color: #64ffda;
+        }
+
+        .nav-link.active {
+            background: rgba(100, 255, 218, 0.2);
+            color: #64ffda;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .section {
+            min-height: 100vh;
+            padding: 5rem 2rem;
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 1s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+            color: #64ffda;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            width: 80%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #64ffda, transparent);
+            bottom: -10px;
+            left: 10%;
+        }
+
+        .content-container {
+            background: rgba(23, 42, 69, 0.7);
+            border-radius: 15px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(100, 255, 218, 0.2);
+        }
+
+        .content-text {
+            line-height: 1.8;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            color: #a8b2d1;
+        }
+
+        .highlight {
+            color: #64ffda;
+            font-weight: 600;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .image-card {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .image-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .image-caption {
+            background: rgba(10, 25, 47, 0.9);
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .quiz-container {
+            background: rgba(23, 42, 69, 0.7);
+            border-radius: 15px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(100, 255, 218, 0.2);
+        }
+
+        .question {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(100, 255, 218, 0.2);
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #e6f1ff;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .option {
+            background: rgba(10, 25, 47, 0.5);
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(100, 255, 218, 0.1);
+        }
+
+        .option:hover {
+            background: rgba(100, 255, 218, 0.1);
+            border-color: #64ffda;
+        }
+
+        .option.selected {
+            background: rgba(100, 255, 218, 0.2);
+            border-color: #64ffda;
+            color: #64ffda;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #00b4db, #0083b0);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            display: block;
+            margin: 2rem auto 0;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 180, 219, 0.4);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 180, 219, 0.6);
+        }
+
+        .result {
+            text-align: center;
+            font-size: 1.3rem;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-radius: 10px;
+            display: none;
+            background: rgba(23, 42, 69, 0.9);
+            border: 2px solid #64ffda;
+        }
+
+        .fill-blanks {
+            background: rgba(23, 42, 69, 0.7);
+            border-radius: 15px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(100, 255, 218, 0.2);
+        }
+
+        .fill-question {
+            margin-bottom: 2rem;
+        }
+
+        .fill-text {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #e6f1ff;
+            line-height: 1.8;
+        }
+
+        .blank {
+            display: inline-block;
+            min-width: 150px;
+            border-bottom: 2px solid #64ffda;
+            margin: 0 5px;
+            padding: 0 5px;
+            position: relative;
+        }
+
+        .blank input {
+            background: transparent;
+            border: none;
+            color: #64ffda;
+            width: 100%;
+            font-size: 1rem;
+            text-align: center;
+            outline: none;
+            padding: 5px 0;
+        }
+
+        .feedback {
+            display: none;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .feedback.correct {
+            background: rgba(40, 167, 69, 0.2);
+            border: 1px solid #28a745;
+            color: #28a745;
+        }
+
+        .feedback.incorrect {
+            background: rgba(220, 53, 69, 0.2);
+            border: 1px solid #dc3545;
+            color: #dc3545;
+        }
+
+        .short-answer {
+            margin-top: 3rem;
+        }
+
+        .answer-box {
+            width: 100%;
+            min-height: 150px;
+            background: rgba(10, 25, 47, 0.5);
+            border: 1px solid rgba(100, 255, 218, 0.2);
+            border-radius: 10px;
+            padding: 1.5rem;
+            color: #f0f8ff;
+            font-size: 1.1rem;
+            resize: vertical;
+            margin-top: 1rem;
+        }
+
+        .answer-box:focus {
+            outline: none;
+            border-color: #64ffda;
+        }
+
+        .tech-icons {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 3rem 0;
+            flex-wrap: wrap;
+        }
+
+        .tech-icon {
+            text-align: center;
+            font-size: 4rem;
+            color: #64ffda;
+            text-shadow: 0 0 15px rgba(100, 255, 218, 0.7);
+            transition: transform 0.3s ease;
+        }
+
+        .tech-icon:hover {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .icon-label {
+            font-size: 1rem;
+            margin-top: 0.5rem;
+            color: #a8b2d1;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(10, 25, 47, 0.8);
+            margin-top: 2rem;
+            color: #a8b2d1;
+            border-top: 1px solid rgba(100, 255, 218, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .image-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <div class="logo">
+                <i class="fas fa-vr-cardboard"></i>
+                <span>ImmersiveTech</span>
+            </div>
+            <div class="nav-links">
+                <div class="nav-link active" data-target="home">Home</div>
+                <div class="nav-link" data-target="quiz">Quiz</div>
+                <div class="nav-link" data-target="fill-blanks">Exercises</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <h2 class="section-title">Immersive Experiences Technology</h2>
+            
+            <div class="content-container">
+                <p class="content-text">
+                    With <span class="highlight">three-dimensional (3D) videography</span>, the joy of watching movies in theatres has reached a new level. Video games are also being developed to provide <span class="highlight">immersive experiences</span> to the player. Immersive experiences allow us to <span class="highlight">visualize, feel, and react</span> by stimulating our senses. It enhances our interaction and involvement, making them more <span class="highlight">realistic and engaging</span>.
+                </p>
+                
+                <p class="content-text">
+                    Immersive experiences have been used in the field of <span class="highlight">training</span>, such as driving simulators, flight simulators, and so on. Immersive experience can be achieved using <span class="highlight">virtual reality (VR)</span> and <span class="highlight">augmented reality (AR)</span>.
+                </p>
+            </div>
+            
+            <div class="tech-icons">
+                <div class="tech-icon-item">
+                    <div class="tech-icon"><i class="fas fa-vr-cardboard"></i></div>
+                    <div class="icon-label">Virtual Reality</div>
+                </div>
+                <div class="tech-icon-item">
+                    <div class="tech-icon"><i class="fas fa-mobile-alt"></i></div>
+                    <div class="icon-label">Augmented Reality</div>
+                </div>
+                <div class="tech-icon-item">
+                    <div class="tech-icon"><i class="fas fa-gamepad"></i></div>
+                    <div class="icon-label">Gaming</div>
+                </div>
+                <div class="tech-icon-item">
+                    <div class="tech-icon"><i class="fas fa-film"></i></div>
+                    <div class="icon-label">3D Cinema</div>
+                </div>
+            </div>
+            
+            <h3 style="text-align: center; margin: 2rem 0; color: #64ffda;">Applications of Immersive Technology</h3>
+            
+            <div class="image-grid">
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1589254065878-42c9da997008?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Driving Simulator">
+                    <div class="image-caption">Driving Simulator for Training</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1593508512255-86ab42a8e620?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Virtual Reality Gaming">
+                    <div class="image-caption">VR Gaming Experience</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1593118247619-e2d6f056869e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="3D Cinema">
+                    <div class="image-caption">3D Movie Experience</div>
+                </div>
+            </div>
+            
+            <div class="content-container" style="margin-top: 3rem;">
+                <h3 style="color: #64ffda; margin-bottom: 1.5rem;">Benefits of Immersive Technology</h3>
+                <ul style="list-style-type: none; padding-left: 1rem;">
+                    <li style="margin-bottom: 1rem; padding-left: 2rem; position: relative;">
+                        <i class="fas fa-check-circle" style="position: absolute; left: 0; color: #64ffda;"></i>
+                        Enhanced learning and retention through experiential training
+                    </li>
+                    <li style="margin-bottom: 1rem; padding-left: 2rem; position: relative;">
+                        <i class="fas fa-check-circle" style="position: absolute; left: 0; color: #64ffda;"></i>
+                        Safe environment for high-risk training scenarios
+                    </li>
+                    <li style="margin-bottom: 1rem; padding-left: 2rem; position: relative;">
+                        <i class="fas fa-check-circle" style="position: absolute; left: 0; color: #64ffda;"></i>
+                        Increased engagement in entertainment and education
+                    </li>
+                    <li style="margin-bottom: 1rem; padding-left: 2rem; position: relative;">
+                        <i class="fas fa-check-circle" style="position: absolute; left: 0; color: #64ffda;"></i>
+                        Remote collaboration and virtual presence
+                    </li>
+                    <li style="padding-left: 2rem; position: relative;">
+                        <i class="fas fa-check-circle" style="position: absolute; left: 0; color: #64ffda;"></i>
+                        Therapeutic applications for phobia treatment and rehabilitation
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section id="quiz" class="section">
+            <h2 class="section-title">Immersive Technology Quiz</h2>
+            
+            <div class="quiz-container">
+                <div class="question">
+                    <div class="question-text">1. What is the primary purpose of immersive experiences?</div>
+                    <div class="options">
+                        <div class="option" data-correct="true">To stimulate our senses and enhance interaction</div>
+                        <div class="option">To reduce production costs of movies</div>
+                        <div class="option">To make devices smaller and portable</div>
+                        <div class="option">To replace traditional learning methods</div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-text">2. Which technologies are commonly used to create immersive experiences?</div>
+                    <div class="options">
+                        <div class="option">Artificial Intelligence and Machine Learning</div>
+                        <div class="option" data-correct="true">Virtual Reality and Augmented Reality</div>
+                        <div class="option">Blockchain and Cryptocurrency</div>
+                        <div class="option">Cloud Computing and Big Data</div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-text">3. How has 3D videography affected movie theaters?</div>
+                    <div class="options">
+                        <div class="option">Reduced the number of moviegoers</div>
+                        <div class="option">Made movies shorter in duration</div>
+                        <div class="option" data-correct="true">Enhanced the viewing experience to a new level</div>
+                        <div class="option">Increased production costs without benefits</div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-text">4. In what field have immersive experiences been particularly useful for training?</div>
+                    <div class="options">
+                        <div class="option">Culinary arts</div>
+                        <div class="option">Fashion design</div>
+                        <div class="option" data-correct="true">Aviation and driving</div>
+                        <div class="option">Literature studies</div>
+                    </div>
+                </div>
+                
+                <button class="submit-btn">Submit Answers</button>
+                
+                <div class="result">
+                    <h3>Quiz Result</h3>
+                    <p>You scored <span id="score">0</span> out of 4!</p>
+                    <p id="feedback-text"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Fill in the Blanks Section -->
+        <section id="fill-blanks" class="section">
+            <h2 class="section-title">Learning Exercises</h2>
+            
+            <div class="fill-blanks">
+                <h3 style="color: #64ffda; text-align: center; margin-bottom: 2rem;">Fill in the Blanks</h3>
+                
+                <div class="fill-question">
+                    <div class="fill-text">
+                        Immersive experiences allow us to 
+                        <span class="blank">
+                            <input type="text" id="blank1" data-answer="visualize">
+                        </span>, 
+                        <span class="blank">
+                            <input type="text" id="blank2" data-answer="feel">
+                        </span> and 
+                        <span class="blank">
+                            <input type="text" id="blank3" data-answer="react">
+                        </span> by stimulating our senses.
+                    </div>
+                    <div class="feedback" id="feedback1"></div>
+                </div>
+                
+                <div class="fill-question">
+                    <div class="fill-text">
+                        Two technologies used to achieve immersive experiences are 
+                        <span class="blank">
+                            <input type="text" id="blank4" data-answer="virtual reality">
+                        </span> and 
+                        <span class="blank">
+                            <input type="text" id="blank5" data-answer="augmented reality">
+                        </span>.
+                    </div>
+                    <div class="feedback" id="feedback2"></div>
+                </div>
+                
+                <div class="fill-question">
+                    <div class="fill-text">
+                        Immersive experiences enhance our 
+                        <span class="blank">
+                            <input type="text" id="blank6" data-answer="interaction">
+                        </span> and 
+                        <span class="blank">
+                            <input type="text" id="blank7" data-answer="involvement">
+                        </span>, making them more realistic and engaging.
+                    </div>
+                    <div class="feedback" id="feedback3"></div>
+                </div>
+                
+                <button class="submit-btn" id="check-blanks">Check Answers</button>
+            </div>
+            
+            <div class="fill-blanks short-answer">
+                <h3 style="color: #64ffda; text-align: center; margin-bottom: 1.5rem;">Short Answer Questions</h3>
+                
+                <div class="fill-question">
+                    <div class="fill-text">
+                        Explain how immersive experiences are used in training applications. Provide two examples.
+                    </div>
+                    <textarea class="answer-box" placeholder="Type your answer here..."></textarea>
+                </div>
+                
+                <div class="fill-question">
+                    <div class="fill-text">
+                        What are the key differences between virtual reality and augmented reality?
+                    </div>
+                    <textarea class="answer-box" placeholder="Type your answer here..."></textarea>
+                </div>
+                
+                <button class="submit-btn" id="save-answers">Save Answers</button>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>© 2023 Immersive Technology Education | Learn about the future of interactive experiences</p>
+        <p style="margin-top: 1rem;">VR | AR | 3D | Simulation | Interactive Media</p>
+    </footer>
+
+    <script>
+        // Navigation functionality
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                // Update active nav link
+                document.querySelectorAll('.nav-link').forEach(item => {
+                    item.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Show the corresponding section
+                const targetSection = this.getAttribute('data-target');
+                document.querySelectorAll('.section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                document.getElementById(targetSection).classList.add('active');
+            });
+        });
+
+        // Quiz functionality
+        let selectedOptions = [];
+        
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', function() {
+                // Remove selected class from siblings
+                const siblings = this.parentElement.children;
+                for (let sibling of siblings) {
+                    sibling.classList.remove('selected');
+                }
+                
+                // Add selected class to clicked option
+                this.classList.add('selected');
+                
+                // Store selected option
+                const questionIndex = Array.from(this.parentElement.parentElement.parentElement.children)
+                    .indexOf(this.parentElement.parentElement);
+                selectedOptions[questionIndex] = this;
+            });
+        });
+
+        // Submit quiz
+        document.querySelector('.submit-btn').addEventListener('click', function() {
+            let score = 0;
+            
+            // Check each question
+            document.querySelectorAll('.question').forEach((question, index) => {
+                if (selectedOptions[index] && selectedOptions[index].hasAttribute('data-correct')) {
+                    score++;
+                    selectedOptions[index].style.background = 'rgba(40, 167, 69, 0.3)';
+                } else if (selectedOptions[index]) {
+                    selectedOptions[index].style.background = 'rgba(220, 53, 69, 0.3)';
+                }
+            });
+            
+            // Show result
+            const result = document.querySelector('.result');
+            const scoreElement = document.getElementById('score');
+            const feedbackText = document.getElementById('feedback-text');
+            
+            scoreElement.textContent = score;
+            
+            if (score === 4) {
+                feedbackText.textContent = "Excellent! You have a great understanding of immersive technology!";
+            } else if (score >= 2) {
+                feedbackText.textContent = "Good job! You understand the basics of immersive experiences.";
+            } else {
+                feedbackText.textContent = "Keep learning! Review the material and try again.";
+            }
+            
+            result.style.display = 'block';
+            result.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Fill in the blanks functionality
+        document.getElementById('check-blanks').addEventListener('click', function() {
+            const blanks = document.querySelectorAll('.blank input');
+            let allCorrect = true;
+            
+            blanks.forEach((blank, index) => {
+                const correctAnswer = blank.getAttribute('data-answer').toLowerCase();
+                const userAnswer = blank.value.trim().toLowerCase();
+                const feedbackId = `feedback${Math.floor(index/3) + 1}`;
+                const feedback = document.getElementById(feedbackId);
+                
+                if (userAnswer === correctAnswer) {
+                    blank.style.color = '#28a745';
+                    feedback.textContent = "Correct!";
+                    feedback.className = "feedback correct";
+                } else {
+                    blank.style.color = '#dc3545';
+                    feedback.textContent = `Incorrect. The correct answer is "${correctAnswer}".`;
+                    feedback.className = "feedback incorrect";
+                    allCorrect = false;
+                }
+                
+                feedback.style.display = 'block';
+            });
+            
+            if (allCorrect) {
+                alert("Congratulations! All your answers are correct!");
+            }
+        });
+
+        // Save answers functionality
+        document.getElementById('save-answers').addEventListener('click', function() {
+            alert("Your answers have been saved! Great job completing the exercises.");
+        });
+    </script>
+</body>
+</html>
