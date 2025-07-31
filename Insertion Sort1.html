@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insertion Sort Visualizer & Quiz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2a0845);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            background: linear-gradient(90deg, #ff9a9e, #fad0c4, #a1c4fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+            color: #e0e0ff;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 900px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .panel {
+            background: rgba(25, 25, 60, 0.85);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .panel-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #4a8cff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #a1c4fd;
+        }
+        
+        .panel-title i {
+            color: #4a8cff;
+        }
+        
+        .visualization {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .array-display {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            height: 250px;
+            gap: 15px;
+            padding: 20px;
+            background: rgba(10, 15, 40, 0.5);
+            border-radius: 10px;
+        }
+        
+        .array-element {
+            width: 60px;
+            background: linear-gradient(to top, #4a8cff, #2a5cb0);
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        
+        .negative-element {
+            background: linear-gradient(to bottom, #ff9a9e, #fad0c4);
+        }
+        
+        .element-value {
+            font-weight: bold;
+            font-size: 1.4rem;
+            padding: 15px 0;
+            z-index: 2;
+        }
+        
+        .element-index {
+            background: rgba(0,0,0,0.3);
+            width: 100%;
+            text-align: center;
+            padding: 8px 0;
+            border-radius: 0 0 8px 8px;
+            font-size: 0.9rem;
+            z-index: 2;
+        }
+        
+        .current {
+            background: linear-gradient(to top, #ff6b6b, #ff3b3b);
+        }
+        
+        .comparing {
+            background: linear-gradient(to top, #ffd166, #ffb700);
+        }
+        
+        .sorted {
+            background: linear-gradient(to top, #06d6a0, #05a27c);
+        }
+        
+        .temp {
+            background: linear-gradient(to top, #a78bfa, #7e5bef);
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        button {
+            background: linear-gradient(to right, #4a8cff, #2a5cb0);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.1);
+            padding: 10px 20px;
+            border-radius: 50px;
+        }
+        
+        .code-container {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .code-display {
+            background: #0d1117;
+            border-radius: 10px;
+            padding: 20px;
+            overflow: auto;
+            max-height: 400px;
+            font-family: 'Consolas', monospace;
+            line-height: 1.5;
+            font-size: 1.1rem;
+            position: relative;
+        }
+        
+        .code-line {
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background 0.3s;
+            margin: 5px 0;
+            display: flex;
+        }
+        
+        .line-number {
+            width: 30px;
+            opacity: 0.7;
+            user-select: none;
+            color: #6e7681;
+        }
+        
+        .highlight {
+            background: rgba(74, 140, 255, 0.25);
+            box-shadow: 0 0 0 1px rgba(74, 140, 255, 0.5);
+        }
+        
+        .explanation {
+            margin-top: 25px;
+        }
+        
+        .explanation-content {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 10px;
+            line-height: 1.6;
+        }
+        
+        .algorithm-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+        
+        .info-card {
+            background: rgba(25, 25, 60, 0.85);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .info-card h3 {
+            margin-bottom: 15px;
+            color: #4a8cff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-card ul {
+            padding-left: 20px;
+        }
+        
+        .info-card li {
+            margin-bottom: 10px;
+        }
+        
+        .quiz-container {
+            margin-top: 40px;
+        }
+        
+        .quiz-panel {
+            background: rgba(25, 25, 60, 0.85);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .question {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .question h3 {
+            margin-bottom: 15px;
+            color: #a1c4fd;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            background: rgba(255,255,255,0.08);
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .option:hover {
+            background: rgba(74, 140, 255, 0.2);
+        }
+        
+        .option.selected {
+            background: rgba(74, 140, 255, 0.3);
+            border: 1px solid #4a8cff;
+        }
+        
+        .option.correct {
+            background: rgba(6, 214, 160, 0.3);
+            border: 1px solid #06d6a0;
+        }
+        
+        .option.incorrect {
+            background: rgba(255, 107, 107, 0.3);
+            border: 1px solid #ff6b6b;
+        }
+        
+        .submit-btn {
+            margin-top: 20px;
+            background: linear-gradient(to right, #06d6a0, #05a27c);
+            width: 100%;
+            justify-content: center;
+            font-size: 1.1rem;
+            padding: 15px;
+        }
+        
+        .results {
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.05);
+            display: none;
+        }
+        
+        .results.show {
+            display: block;
+        }
+        
+        .results h3 {
+            margin-bottom: 15px;
+            color: #4a8cff;
+        }
+        
+        .score {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffd166;
+            margin: 10px 0;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 40px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #a1c4fd;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 1s infinite;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-sort-amount-down-alt"></i> Insertion Sort Algorithm</h1>
+            <p class="subtitle">Visualize how the insertion sort algorithm works step-by-step and test your knowledge with our interactive quiz</p>
+        </header>
+        
+        <div class="content">
+            <div class="panel visualization">
+                <h2 class="panel-title"><i class="fas fa-chart-bar"></i> Sorting Visualization</h2>
+                <div class="array-display" id="arrayDisplay">
+                    <!-- Array elements will be generated here -->
+                </div>
+                
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(to top, #ff6b6b, #ff3b3b);"></div>
+                        <span>Current Element</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(to top, #ffd166, #ffb700);"></div>
+                        <span>Comparing</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(to top, #06d6a0, #05a27c);"></div>
+                        <span>Sorted</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: linear-gradient(to top, #a78bfa, #7e5bef);"></div>
+                        <span>Temporary Storage</span>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button id="prevBtn"><i class="fas fa-step-backward"></i> Previous</button>
+                    <button id="nextBtn">Next <i class="fas fa-step-forward"></i></button>
+                    <button id="playBtn"><i class="fas fa-play"></i> Play</button>
+                    <button id="resetBtn"><i class="fas fa-redo"></i> Reset</button>
+                    <div class="speed-control">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <input type="range" id="speedSlider" min="50" max="1000" value="400">
+                    </div>
+                </div>
+                
+                <div class="explanation">
+                    <h3 class="panel-title"><i class="fas fa-info-circle"></i> Algorithm Explanation</h3>
+                    <div class="explanation-content" id="explanation">
+                        <p>Insertion sort is a simple sorting algorithm that builds the final sorted array one item at a time. It works by repeatedly taking the next element and inserting it into the correct position in the already sorted part of the array.</p>
+                        <p><strong>Current Step:</strong> Click "Next" to start the visualization. The algorithm will begin by taking the second element (7) and comparing it with the elements before it.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel code-container">
+                <h2 class="panel-title"><i class="fas fa-code"></i> Python Implementation</h2>
+                <div class="code-display">
+                    <div class="code-line"><span class="line-number">1</span><span>def insertion_Sort(arr):</span></div>
+                    <div class="code-line"><span class="line-number">2</span><span>    n = len(arr)</span></div>
+                    <div class="code-line"><span class="line-number">3</span><span>    for i in range(1, n):</span></div>
+                    <div class="code-line"><span class="line-number">4</span><span>        key = arr[i]</span></div>
+                    <div class="code-line"><span class="line-number">5</span><span>        j = i-1</span></div>
+                    <div class="code-line"><span class="line-number">6</span><span>        while j >= 0 and key < arr[j]:</span></div>
+                    <div class="code-line"><span class="line-number">7</span><span>            arr[j+1] = arr[j]</span></div>
+                    <div class="code-line"><span class="line-number">8</span><span>            j -= 1</span></div>
+                    <div class="code-line"><span class="line-number">9</span><span>        arr[j+1] = key</span></div>
+                    <div class="code-line"><span class="line-number">10</span><span></span></div>
+                    <div class="code-line"><span class="line-number">11</span><span># Test the algorithm</span></div>
+                    <div class="code-line"><span class="line-number">12</span><span>numList = [8, 7, 13, 1, -9, 4]</span></div>
+                    <div class="code-line"><span class="line-number">13</span><span>print("Original array:", numList)</span></div>
+                    <div class="code-line"><span class="line-number">14</span><span>insertion_Sort(numList)</span></div>
+                    <div class="code-line"><span class="line-number">15</span><span>print("Sorted array:", numList)</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="quiz-container">
+            <div class="panel quiz-panel">
+                <h2 class="panel-title"><i class="fas fa-question-circle"></i> Insertion Sort Quiz</h2>
+                <p>Test your understanding of the insertion sort algorithm with these questions:</p>
+                
+                <div class="question">
+                    <h3>1. What is the time complexity of insertion sort in the worst case?</h3>
+                    <div class="options">
+                        <div class="option" data-correct="false">O(n log n)</div>
+                        <div class="option" data-correct="true">O(n²)</div>
+                        <div class="option" data-correct="false">O(n)</div>
+                        <div class="option" data-correct="false">O(1)</div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h3>2. Which part of the array is always sorted during insertion sort execution?</h3>
+                    <div class="options">
+                        <div class="option" data-correct="false">The right half</div>
+                        <div class="option" data-correct="true">The left portion up to the current element</div>
+                        <div class="option" data-correct="false">The entire array after each iteration</div>
+                        <div class="option" data-correct="false">The middle portion</div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h3>3. In the insertion sort algorithm, what does the variable 'key' represent?</h3>
+                    <div class="options">
+                        <div class="option" data-correct="false">The smallest element in the array</div>
+                        <div class="option" data-correct="true">The current element being inserted</div>
+                        <div class="option" data-correct="false">The index of the last sorted element</div>
+                        <div class="option" data-correct="false">The total number of elements</div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h3>4. When is insertion sort most efficient?</h3>
+                    <div class="options">
+                        <div class="option" data-correct="false">When the array is sorted in reverse order</div>
+                        <div class="option" data-correct="true">When the array is already mostly sorted</div>
+                        <div class="option" data-correct="false">When the array has many duplicate values</div>
+                        <div class="option" data-correct="false">When the array is very large</div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <h3>5. What is the main operation performed in the inner loop of insertion sort?</h3>
+                    <div class="options">
+                        <div class="option" data-correct="false">Swapping adjacent elements</div>
+                        <div class="option" data-correct="true">Shifting elements to the right</div>
+                        <div class="option" data-correct="false">Finding the minimum element</div>
+                        <div class="option" data-correct="false">Comparing elements with a pivot</div>
+                    </div>
+                </div>
+                
+                <button id="submitQuiz" class="submit-btn"><i class="fas fa-check-circle"></i> Check Answers</button>
+                
+                <div class="results" id="quizResults">
+                    <h3>Quiz Results</h3>
+                    <p>Your score: <span class="score" id="quizScore">0</span>/5</p>
+                    <p id="quizFeedback">Keep learning! Review the visualization and try again.</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Interactive Insertion Sort Visualizer & Quiz | Created with HTML, CSS, and JavaScript</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Initial array
+        const initialArray = [8, 7, 13, 1, -9, 4];
+        let currentArray = [...initialArray];
+        let currentStep = 0;
+        let isPlaying = false;
+        let playInterval;
+        let speed = 400; // Default speed in ms
+        
+        // State for the algorithm
+        let algorithmState = {
+            i: 1,
+            j: 0,
+            temp: null,
+            comparing: false,
+            shifting: false,
+            inserting: false,
+            sortedIndices: [0]
+        };
+        
+        // DOM elements
+        const arrayDisplay = document.getElementById('arrayDisplay');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const playBtn = document.getElementById('playBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const speedSlider = document.getElementById('speedSlider');
+        const explanation = document.getElementById('explanation');
+        const codeLines = document.querySelectorAll('.code-line');
+        const options = document.querySelectorAll('.option');
+        const submitBtn = document.getElementById('submitQuiz');
+        const quizResults = document.getElementById('quizResults');
+        const quizScore = document.getElementById('quizScore');
+        const quizFeedback = document.getElementById('quizFeedback');
+        
+        // Initialize visualization
+        function initVisualization() {
+            renderArray();
+            updateExplanation();
+        }
+        
+        // Render array with visual styles
+        function renderArray() {
+            arrayDisplay.innerHTML = '';
+            
+            currentArray.forEach((value, index) => {
+                const element = document.createElement('div');
+                element.className = 'array-element';
+                
+                if (value < 0) {
+                    element.classList.add('negative-element');
+                }
+                
+                // Calculate height based on absolute value
+                const height = Math.max(30, Math.abs(value) * 15);
+                element.style.height = `${height}px`;
+                
+                element.innerHTML = `
+                    <div class="element-value">${value}</div>
+                    <div class="element-index">${index}</div>
+                `;
+                
+                // Apply visual state
+                if (algorithmState.sortedIndices.includes(index)) {
+                    element.classList.add('sorted');
+                }
+                
+                if (index === algorithmState.i) {
+                    element.classList.add('current');
+                }
+                
+                if (index === algorithmState.j || (algorithmState.comparing && index === algorithmState.j + 1)) {
+                    element.classList.add('comparing');
+                }
+                
+                if (algorithmState.temp === value) {
+                    element.classList.add('temp');
+                }
+                
+                arrayDisplay.appendChild(element);
+            });
+        }
+        
+        // Update algorithm state based on current step
+        function updateAlgorithmState() {
+            // Reset state
+            algorithmState = {
+                i: 1,
+                j: 0,
+                temp: null,
+                comparing: false,
+                shifting: false,
+                inserting: false,
+                sortedIndices: [0]
+            };
+            
+            // Update state based on step
+            if (currentStep >= 1) algorithmState.i = 1;
+            if (currentStep >= 2) {
+                algorithmState.comparing = true;
+                algorithmState.temp = 7;
+            }
+            if (currentStep >= 3) algorithmState.shifting = true;
+            if (currentStep >= 4) {
+                algorithmState.shifting = false;
+                algorithmState.inserting = true;
+                algorithmState.sortedIndices = [0, 1];
+            }
+            if (currentStep >= 5) algorithmState.i = 2;
+            if (currentStep >= 6) algorithmState.comparing = true;
+            if (currentStep >= 7) {
+                algorithmState.i = 3;
+                algorithmState.sortedIndices = [0, 1, 2];
+            }
+            if (currentStep >= 8) algorithmState.comparing = true;
+            if (currentStep >= 9) algorithmState.shifting = true;
+            if (currentStep >= 10) algorithmState.comparing = true;
+            if (currentStep >= 11) algorithmState.shifting = true;
+            if (currentStep >= 12) algorithmState.comparing = true;
+            if (currentStep >= 13) algorithmState.shifting = true;
+            if (currentStep >= 14) {
+                algorithmState.inserting = true;
+                algorithmState.sortedIndices = [0, 1, 2, 3];
+            }
+            if (currentStep >= 15) algorithmState.i = 4;
+            if (currentStep >= 16) algorithmState.comparing = true;
+            if (currentStep >= 17) algorithmState.shifting = true;
+            if (currentStep >= 18) algorithmState.comparing = true;
+            if (currentStep >= 19) algorithmState.shifting = true;
+            if (currentStep >= 20) algorithmState.comparing = true;
+            if (currentStep >= 21) algorithmState.shifting = true;
+            if (currentStep >= 22) algorithmState.comparing = true;
+            if (currentStep >= 23) algorithmState.shifting = true;
+            if (currentStep >= 24) {
+                algorithmState.inserting = true;
+                algorithmState.sortedIndices = [0, 1, 2, 3, 4];
+            }
+            if (currentStep >= 25) algorithmState.i = 5;
+            if (currentStep >= 26) algorithmState.comparing = true;
+            if (currentStep >= 27) algorithmState.shifting = true;
+            if (currentStep >= 28) algorithmState.comparing = true;
+            if (currentStep >= 29) algorithmState.shifting = true;
+            if (currentStep >= 30) algorithmState.comparing = true;
+            if (currentStep >= 31) algorithmState.shifting = true;
+            if (currentStep >= 32) algorithmState.comparing = true;
+            if (currentStep >= 33) {
+                algorithmState.inserting = true;
+                algorithmState.sortedIndices = [0, 1, 2, 3, 4, 5];
+            }
+            
+            // Update array based on step
+            currentArray = [...initialArray];
+            
+            if (currentStep >= 4) currentArray = [7, 8, 13, 1, -9, 4];
+            if (currentStep >= 7) currentArray = [7, 8, 13, 1, -9, 4];
+            if (currentStep >= 14) currentArray = [1, 7, 8, 13, -9, 4];
+            if (currentStep >= 24) currentArray = [-9, 1, 7, 8, 13, 4];
+            if (currentStep >= 33) currentArray = [-9, 1, 4, 7, 8, 13];
+        }
+        
+        // Update explanation text
+        function updateExplanation() {
+            const explanations = [
+                "The algorithm starts with the initial unsorted array. Insertion sort works by dividing the array into a sorted and an unsorted region.",
+                "We begin with the second element (7) as our key. The key is the element we're going to insert into the sorted region.",
+                "Compare the key (7) with the element before it (8). Since 7 is less than 8, we need to shift elements to make space for 7.",
+                "Shift the larger element (8) to the right to make space for the key. We're effectively moving elements greater than the key to the right.",
+                "Insert the key (7) into its correct position. Now the sorted region contains [7, 8] and the unsorted region is [13, 1, -9, 4].",
+                "Move to the next element (13) as the new key. We'll now insert this into the sorted region [7, 8].",
+                "Compare the key (13) with the element before it (8). Since 13 is greater than 8, no shifting is needed. 13 is already in place.",
+                "Move to the next element (1) as the new key. We'll now insert this into the sorted region [7, 8, 13].",
+                "Compare the key (1) with the element before it (13). Since 1 is less than 13, we need to shift elements.",
+                "Shift 13 to the right to make space for the key. The array becomes [7, 8, 13, 13, -9, 4].",
+                "Compare the key (1) with the next element to the left (8). Since 1 is less than 8, continue shifting.",
+                "Shift 8 to the right. The array becomes [7, 8, 8, 13, -9, 4].",
+                "Compare the key (1) with the next element to the left (7). Since 1 is less than 7, continue shifting.",
+                "Shift 7 to the right. The array becomes [7, 7, 8, 13, -9, 4].",
+                "Insert the key (1) into its correct position. The array becomes [1, 7, 8, 13, -9, 4].",
+                "Move to the next element (-9) as the new key. We'll now insert this into the sorted region [1, 7, 8, 13].",
+                "Compare the key (-9) with the element before it (13). Since -9 is less than 13, we need to shift elements.",
+                "Shift 13 to the right. The array becomes [1, 7, 8, 13, 13, 4].",
+                "Compare the key (-9) with the next element to the left (8). Since -9 is less than 8, continue shifting.",
+                "Shift 8 to the right. The array becomes [1, 7, 8, 8, 13, 4].",
+                "Compare the key (-9) with the next element to the left (7). Since -9 is less than 7, continue shifting.",
+                "Shift 7 to the right. The array becomes [1, 7, 7, 8, 13, 4].",
+                "Compare the key (-9) with the next element to the left (1). Since -9 is less than 1, continue shifting.",
+                "Shift 1 to the right. The array becomes [1, 1, 7, 8, 13, 4].",
+                "Insert the key (-9) into its correct position. The array becomes [-9, 1, 7, 8, 13, 4].",
+                "Move to the next element (4) as the new key. We'll now insert this into the sorted region [-9, 1, 7, 8, 13].",
+                "Compare the key (4) with the element before it (13). Since 4 is less than 13, we need to shift elements.",
+                "Shift 13 to the right. The array becomes [-9, 1, 7, 8, 13, 13].",
+                "Compare the key (4) with the next element to the left (8). Since 4 is less than 8, continue shifting.",
+                "Shift 8 to the right. The array becomes [-9, 1, 7, 8, 8, 13].",
+                "Compare the key (4) with the next element to the left (7). Since 4 is less than 7, continue shifting.",
+                "Shift 7 to the right. The array becomes [-9, 1, 7, 7, 8, 13].",
+                "Compare the key (4) with the next element to the left (1). Since 4 is greater than 1, we've found the insertion point.",
+                "Insert the key (4) into its correct position. The array becomes [-9, 1, 4, 7, 8, 13].",
+                "The array is now completely sorted! Insertion sort has placed every element in its correct position by repeatedly shifting elements and inserting keys into the sorted region."
+            ];
+            
+            if (currentStep < explanations.length) {
+                explanation.innerHTML = `<p>${explanations[currentStep]}</p>`;
+            }
+        }
+        
+        // Update code highlight based on current step
+        function updateCodeHighlight() {
+            // Remove all highlights
+            codeLines.forEach(line => line.classList.remove('highlight'));
+            
+            // Highlight based on step
+            if (currentStep === 0) {
+                codeLines[2].classList.add('highlight'); // for loop
+            } else if (currentStep >= 1 && currentStep <= 4) {
+                codeLines[3].classList.add('highlight'); // key = arr[i]
+                if (currentStep >= 2) codeLines[5].classList.add('highlight'); // while condition
+                if (currentStep >= 3) codeLines[6].classList.add('highlight'); // shift
+                if (currentStep >= 4) codeLines[8].classList.add('highlight'); // insertion
+            } else if (currentStep >= 5 && currentStep <= 6) {
+                codeLines[3].classList.add('highlight'); // key = arr[i]
+                if (currentStep >= 6) codeLines[5].classList.add('highlight'); // while condition
+            } else if (currentStep >= 7 && currentStep <= 14) {
+                codeLines[3].classList.add('highlight'); // key = arr[i]
+                if (currentStep >= 8) codeLines[5].classList.add('highlight'); // while condition
+                if (currentStep >= 9) codeLines[6].classList.add('highlight'); // shift
+                if (currentStep >= 14) codeLines[8].classList.add('highlight'); // insertion
+            } else if (currentStep >= 15 && currentStep <= 24) {
+                codeLines[3].classList.add('highlight'); // key = arr[i]
+                if (currentStep >= 16) codeLines[5].classList.add('highlight'); // while condition
+                if (currentStep >= 17) codeLines[6].classList.add('highlight'); // shift
+                if (currentStep >= 24) codeLines[8].classList.add('highlight'); // insertion
+            } else if (currentStep >= 25 && currentStep <= 33) {
+                codeLines[3].classList.add('highlight'); // key = arr[i]
+                if (currentStep >= 26) codeLines[5].classList.add('highlight'); // while condition
+                if (currentStep >= 27) codeLines[6].classList.add('highlight'); // shift
+                if (currentStep >= 33) codeLines[8].classList.add('highlight'); // insertion
+            }
+        }
+        
+        // Next step
+        function nextStep() {
+            if (currentStep < 33) {
+                currentStep++;
+                updateAlgorithmState();
+                renderArray();
+                updateExplanation();
+                updateCodeHighlight();
+            } else {
+                pause();
+            }
+        }
+        
+        // Previous step
+        function prevStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                updateAlgorithmState();
+                renderArray();
+                updateExplanation();
+                updateCodeHighlight();
+            }
+        }
+        
+        // Play/pause the animation
+        function playPause() {
+            if (isPlaying) {
+                pause();
+            } else {
+                play();
+            }
+        }
+        
+        // Play animation
+        function play() {
+            isPlaying = true;
+            playBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+            playBtn.classList.add('pulse');
+            
+            playInterval = setInterval(() => {
+                if (currentStep < 33) {
+                    nextStep();
+                } else {
+                    pause();
+                }
+            }, speed);
+        }
+        
+        // Pause animation
+        function pause() {
+            isPlaying = false;
+            clearInterval(playInterval);
+            playBtn.innerHTML = '<i class="fas fa-play"></i> Play';
+            playBtn.classList.remove('pulse');
+        }
+        
+        // Reset visualization
+        function reset() {
+            pause();
+            currentStep = 0;
+            currentArray = [...initialArray];
+            algorithmState = {
+                i: 1,
+                j: 0,
+                temp: null,
+                comparing: false,
+                shifting: false,
+                inserting: false,
+                sortedIndices: [0]
+            };
+            renderArray();
+            updateExplanation();
+            updateCodeHighlight();
+        }
+        
+        // Quiz functionality
+        options.forEach(option => {
+            option.addEventListener('click', function() {
+                // Remove selection from other options in this question
+                const siblings = this.parentNode.children;
+                for (let sibling of siblings) {
+                    sibling.classList.remove('selected');
+                }
+                
+                // Select this option
+                this.classList.add('selected');
+            });
+        });
+        
+        submitBtn.addEventListener('click', function() {
+            let score = 0;
+            
+            // Check each question
+            document.querySelectorAll('.question').forEach((question, index) => {
+                const selected = question.querySelector('.option.selected');
+                if (selected) {
+                    if (selected.dataset.correct === "true") {
+                        selected.classList.add('correct');
+                        score++;
+                    } else {
+                        selected.classList.add('incorrect');
+                        // Highlight correct answer
+                        const correctOption = question.querySelector('.option[data-correct="true"]');
+                        correctOption.classList.add('correct');
+                    }
+                }
+            });
+            
+            // Show results
+            quizScore.textContent = score;
+            quizResults.classList.add('show');
+            
+            // Feedback based on score
+            if (score === 5) {
+                quizFeedback.textContent = "Excellent! You have a great understanding of insertion sort!";
+            } else if (score >= 3) {
+                quizFeedback.textContent = "Good job! You understand the basics of insertion sort.";
+            } else {
+                quizFeedback.textContent = "Keep learning! Review the visualization and try again.";
+            }
+        });
+        
+        // Event listeners
+        nextBtn.addEventListener('click', nextStep);
+        prevBtn.addEventListener('click', prevStep);
+        playBtn.addEventListener('click', playPause);
+        resetBtn.addEventListener('click', reset);
+        
+        speedSlider.addEventListener('input', () => {
+            speed = 1050 - speedSlider.value; // Invert value so right is faster
+            if (isPlaying) {
+                pause();
+                play();
+            }
+        });
+        
+        // Initialize
+        initVisualization();
+    </script>
+</body>
+</html>
